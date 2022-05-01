@@ -13,7 +13,6 @@ jobs:
       - name: Set up openJDK
         uses: actions/setup-java@v1
         with:
-          distribution: 'temurin'
           java-version: '17'
       - name: Install with Maven
         run: ./mvnw clean compile
