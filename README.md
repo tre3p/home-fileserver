@@ -1,5 +1,6 @@
 ## Badges
 
+![Build](https://github.com/tre3p/home-fileserver/actions/workflows/build.yml/badge.svg)
 <a href="https://codeclimate.com/github/tre3p/home-fileserver/maintainability"><img src="https://api.codeclimate.com/v1/badges/d1d0ffd23c3814c5a71a/maintainability" /></a>
 
 ## Description
