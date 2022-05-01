@@ -12,4 +12,4 @@ Pet project, which main goal is to make home file server, which can retrieve fil
 
 ## Launch
 
-For now, docker-compose not working. Gonna be here soon
+For now, docker-compose not working, gonna be updated soon.
