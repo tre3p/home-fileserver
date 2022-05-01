@@ -1,0 +1,19 @@
+services:
+  postgres:
+    container_name: postgres
+    image: postgres
+    environment:
+      POSTGRES_USER: tr33p
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: fileserver
+      PGDATA: /data/postgres
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+  app:
+    container_name: fileserver
+    build: .
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgres
