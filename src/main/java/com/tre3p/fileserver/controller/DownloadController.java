@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.zip.DataFormatException;
+
 @AllArgsConstructor
 @RestController
 @RequestMapping("/download")
@@ -21,8 +23,8 @@ public class DownloadController {
     private final FileService fileService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<byte[]> download(@PathVariable Integer id) {
-        File dbFile = fileService.getById(id);
+    public ResponseEntity<byte[]> download(@PathVariable Integer id) throws DataFormatException {
+        File dbFile = fileService.decompressAndGetById(id);
         byte[] fileData = dbFile.getData();
 
         ContentDisposition contentDisposition = ContentDisposition.builder("attachment")

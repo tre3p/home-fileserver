@@ -38,7 +38,7 @@ public class FileController {
 
     @PostMapping
     public File uploadNewFile(@RequestPart("data") MultipartFile file) throws IOException {
-        return fileService.save(
+        return fileService.compressAndSave(
                 file.getOriginalFilename(),
                 file.getContentType(),
                 file.getBytes()
