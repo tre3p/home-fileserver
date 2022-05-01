@@ -1,0 +1,19 @@
+name: Build CI
+
+on:
+  - push
+  - pull_request
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up openJDK
+        uses: actions/setup-java@v1
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+        - name: Install with Maven
+          run: ./mvnw clean install
