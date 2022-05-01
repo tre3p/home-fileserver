@@ -16,4 +16,4 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
       - name: Install with Maven
-        run: ./mvnw clean install
+        run: ./mvnw clean compile
