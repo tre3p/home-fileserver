@@ -1,6 +1,7 @@
 package com.tre3p.fileserver.service.impl;
 
-import com.tre3p.fileserver.model.File;
+import com.tre3p.fileserver.model.FileContent;
+import com.tre3p.fileserver.model.FileMetadata;
 import com.tre3p.fileserver.repository.FileRepository;
 import com.tre3p.fileserver.service.FileCompressorService;
 import com.tre3p.fileserver.service.FileService;
@@ -20,12 +21,12 @@ public class FileServiceImpl implements FileService {
     private final FileCompressorService compressorService;
 
     @Override
-    public Iterable<File> getAll() {
+    public Iterable<FileMetadata> getAll() {
         return fileRepository.findAll();
     }
 
     @Override
-    public File getById(Integer id) {
+    public FileMetadata getById(Integer id) {
         return fileRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
@@ -36,21 +37,21 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public File compressAndSave(String fileName, String contentType, byte[] bytes) {
-        return fileRepository.save(new File(
+    public FileMetadata compressAndSave(String fileName, String contentType, byte[] bytes) {
+        return fileRepository.save(new FileMetadata(
                 fileName,
                 contentType,
-                compressorService.compress(bytes)
+                new FileContent(compressorService.compress(bytes))
         ));
     }
 
     @Override
-    public File decompressAndGetById(Integer id) throws DataFormatException {
-        File dbFile = fileRepository.findById(id)
+    public FileMetadata decompressAndGetById(Integer id) throws DataFormatException {
+        FileMetadata dbFile = fileRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        byte[] decompressedData = compressorService.decompress(dbFile.getData());
-        dbFile.setData(decompressedData);
+        byte[] decompressedData = compressorService.decompress(dbFile.getFileContent().getContent());
+        dbFile.setFileContent(new FileContent(decompressedData));
 
         return dbFile;
     }

@@ -5,16 +5,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotEmpty;
 
 @Entity
 @Data
 @NoArgsConstructor
-public class File {
+public class FileMetadata {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,11 +30,12 @@ public class File {
 
     @JsonIgnore
     @ToString.Exclude
-    private byte[] data;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private FileContent fileContent;
 
-    public File(String fileName, String contentType, byte[] data) {
+    public FileMetadata(String fileName, String contentType, FileContent fileContent) {
         this.fileName = fileName;
         this.contentType = contentType;
-        this.data = data;
+        this.fileContent = fileContent;
     }
 }

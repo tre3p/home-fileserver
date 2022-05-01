@@ -1,8 +1,9 @@
 package com.tre3p.fileserver.controller;
 
-import com.tre3p.fileserver.model.File;
+import com.tre3p.fileserver.model.FileMetadata;
 import com.tre3p.fileserver.service.FileService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -15,17 +16,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.zip.DataFormatException;
 
+@Slf4j
 @AllArgsConstructor
 @RestController
 @RequestMapping("/download")
 public class DownloadController {
-
     private final FileService fileService;
-
     @GetMapping("/{id}")
     public ResponseEntity<byte[]> download(@PathVariable Integer id) throws DataFormatException {
-        File dbFile = fileService.decompressAndGetById(id);
-        byte[] fileData = dbFile.getData();
+        log.info("+download(): downloading file with id: {}", id);
+        FileMetadata dbFile = fileService.decompressAndGetById(id);
+        byte[] fileContent = dbFile.getFileContent().getContent();
 
         ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                 .filename(dbFile.getFileName())
@@ -35,6 +36,7 @@ public class DownloadController {
         httpHeaders.setContentType(MediaType.valueOf(dbFile.getContentType()));
         httpHeaders.setContentDisposition(contentDisposition);
 
-        return new ResponseEntity<>(fileData, httpHeaders, HttpStatus.OK);
+        log.info("-download(): file with id {} was downloaded", id);
+        return new ResponseEntity<>(fileContent, httpHeaders, HttpStatus.OK);
     }
 }
