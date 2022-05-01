@@ -8,7 +8,13 @@
 *.ctxt
 
 # mvn
-.mvn
+/.mvn
+
+# Mac files
+.DS_Store
+
+# IDEA
+/.idea
 
 # Target
 /target
