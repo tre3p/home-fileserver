@@ -17,6 +17,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.concurrent.CompletableFuture;
 import java.util.zip.DataFormatException;
 
 @Slf4j
@@ -46,6 +47,58 @@ public class FileServiceImpl implements FileService {
         fileRepository.deleteById(id);
     }
 
+    @Override
+    public CompletableFuture<FileMetadata> prepareAndSaveAsync(String fileName, String contentType, byte[] bytes) {
+        return CompletableFuture.supplyAsync(() -> {
+            byte[] zippedData = compressorService.compress(bytes);
+            byte[] encryptedData;
+
+            if (zippedData.length > bytes.length) {
+                try {
+                    encryptedData = encryptorService.encrypt(bytes);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+
+                return fileRepository.save(new FileMetadata(
+                        fileName,
+                        contentType,
+                        new FileContent(encryptedData),
+                        false
+                ));
+            }
+
+            try {
+                encryptedData = encryptorService.encrypt(zippedData);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+            return fileRepository.save(new FileMetadata(
+                    fileName,
+                    contentType,
+                    new FileContent(encryptedData),
+                    true
+            ));
+        });
+    }
+
+
+    /**
+     *
+     * @param fileName
+     * @param contentType
+     * @param bytes
+     * @return
+     * @throws NoSuchPaddingException
+     * @throws IllegalBlockSizeException
+     * @throws NoSuchAlgorithmException
+     * @throws BadPaddingException
+     * @throws InvalidKeyException
+     *
+     * Implementation without async call from controller. For now, application uses prepareAndSaveAsync method.
+     *
+     */
     @Override
     public FileMetadata prepareAndSave(String fileName, String contentType, byte[] bytes) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         log.info("+prepareAndSave(): fileName: {}, contentType: {}, size: {}", fileName, contentType, bytes.length);
