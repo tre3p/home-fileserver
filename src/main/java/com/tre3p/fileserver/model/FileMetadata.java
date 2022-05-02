@@ -28,14 +28,17 @@ public class FileMetadata {
 
     private String contentType;
 
+    private boolean isZipped;
+
     @JsonIgnore
     @ToString.Exclude
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private FileContent fileContent;
 
-    public FileMetadata(String fileName, String contentType, FileContent fileContent) {
+    public FileMetadata(String fileName, String contentType, FileContent fileContent, boolean isZipped) {
         this.fileName = fileName;
         this.contentType = contentType;
         this.fileContent = fileContent;
+        this.isZipped = isZipped;
     }
 }

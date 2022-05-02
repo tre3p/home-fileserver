@@ -14,6 +14,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.zip.DataFormatException;
 
 @Slf4j
@@ -21,9 +26,11 @@ import java.util.zip.DataFormatException;
 @RestController
 @RequestMapping("/download")
 public class DownloadController {
+
     private final FileService fileService;
+
     @GetMapping("/{id}")
-    public ResponseEntity<byte[]> download(@PathVariable Integer id) throws DataFormatException {
+    public ResponseEntity<byte[]> download(@PathVariable Integer id) throws DataFormatException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         log.info("+download(): downloading file with id: {}", id);
         FileMetadata dbFile = fileService.decompressAndGetById(id);
         byte[] fileContent = dbFile.getFileContent().getContent();

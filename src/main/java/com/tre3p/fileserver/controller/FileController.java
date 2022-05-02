@@ -13,7 +13,12 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 
 @Slf4j
 @RestController
@@ -42,9 +47,9 @@ public class FileController {
     }
 
     @PostMapping
-    public FileMetadata uploadNewFile(@RequestPart("data") MultipartFile file) throws IOException {
+    public FileMetadata uploadNewFile(@RequestPart("data") MultipartFile file) throws IOException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         log.info("uploadNewFile(): file with name \"{}\" and size {} is uploading", file.getOriginalFilename(), file.getSize());
-        return fileService.compressAndSave(
+        return fileService.prepareAndSave(
                 file.getOriginalFilename(),
                 file.getContentType(),
                 file.getBytes()
