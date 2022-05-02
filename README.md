@@ -15,6 +15,10 @@ Pet project, which main goal is to make home file server, which can retrieve fil
 
 * Java 17
 
+## ToDo:
+
+I appreciate any help, so if you want to make this project a bit better - you can check Issues of this project, and i will be waiting for your PR :P
+
 ## Launch
 
 For now, docker-compose not working, gonna be updated soon.
