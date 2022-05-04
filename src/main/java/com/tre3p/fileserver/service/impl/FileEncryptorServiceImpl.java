@@ -1,6 +1,8 @@
 package com.tre3p.fileserver.service.impl;
 
 import com.tre3p.fileserver.service.FileEncryptorService;
+import lombok.AllArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -22,7 +24,7 @@ public class FileEncryptorServiceImpl implements FileEncryptorService {
     private String encryptionKey;
 
     @Value("${security.algorithm}")
-    public String ALGO;
+    private String ALGO;
 
     @Override
     public byte[] encrypt(byte[] data) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
