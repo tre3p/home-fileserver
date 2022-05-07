@@ -1,12 +1,17 @@
 package com.tre3p.fileserver.view;
 
 import com.tre3p.fileserver.model.FileMetadata;
+import com.tre3p.fileserver.security.SecurityService;
 import com.tre3p.fileserver.service.FileService;
 import com.tre3p.fileserver.service.impl.FileServiceImpl;
+import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
@@ -27,6 +32,7 @@ import java.util.zip.DataFormatException;
 @Route(value = "")
 @PageTitle("File Server")
 public class MainView extends VerticalLayout {
+
     Grid<FileMetadata> grid = new Grid<>(FileMetadata.class, false);
 
     private final FileService fileService;
@@ -38,7 +44,6 @@ public class MainView extends VerticalLayout {
         configureGrid();
         add(grid);
         add(getUpload());
-
     }
 
     private Upload getUpload() {

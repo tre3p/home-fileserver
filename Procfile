@@ -1,1 +1,1 @@
-web: java -jar target/fileserver-1.0.2.jar -Dspring.profiles.active=prod application.jar
+web: java -jar target/fileserver-1.0.3.jar -Dspring.profiles.active=prod application.jar
