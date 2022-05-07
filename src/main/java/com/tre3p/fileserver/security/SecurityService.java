@@ -19,7 +19,6 @@ public class SecurityService {
         if (principal instanceof UserDetails) {
             return (UserDetails) context.getAuthentication().getPrincipal();
         }
-        // Anonymous or no authentication.
         return null;
     }
 

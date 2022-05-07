@@ -28,7 +28,7 @@ package.json
 /.idea
 
 # Target
-/target
+
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
