@@ -1,0 +1,26 @@
+server:
+  port: ${PORT:5050}
+
+spring:
+  application:
+    name: fileserver
+  datasource:
+    password: root
+    url: ${JDBC_DATABASE_URL}
+    username: tr33p
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+  servlet:
+    multipart:
+      max-file-size: -1
+      max-request-size: -1
+
+security:
+  encryption-key: vevnwecjc43cece[socmqweokcm34c[3
+  algorithm: AES

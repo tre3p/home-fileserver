@@ -8,6 +8,7 @@ import com.tre3p.fileserver.service.FileEncryptorService;
 import com.tre3p.fileserver.service.FileService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -17,7 +18,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.concurrent.CompletableFuture;
+import java.util.List;
 import java.util.zip.DataFormatException;
 
 @Slf4j
@@ -32,7 +33,7 @@ public class FileServiceImpl implements FileService {
     private final FileEncryptorService encryptorService;
 
     @Override
-    public Iterable<FileMetadata> getAll() {
+    public List<FileMetadata> getAll() {
         return fileRepository.findAll();
     }
 
@@ -48,58 +49,6 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public CompletableFuture<FileMetadata> prepareAndSaveAsync(String fileName, String contentType, byte[] bytes) {
-        return CompletableFuture.supplyAsync(() -> {
-            byte[] zippedData = compressorService.compress(bytes);
-            byte[] encryptedData;
-
-            if (zippedData.length > bytes.length) {
-                try {
-                    encryptedData = encryptorService.encrypt(bytes);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-
-                return fileRepository.save(new FileMetadata(
-                        fileName,
-                        contentType,
-                        new FileContent(encryptedData),
-                        false
-                ));
-            }
-
-            try {
-                encryptedData = encryptorService.encrypt(zippedData);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-
-            return fileRepository.save(new FileMetadata(
-                    fileName,
-                    contentType,
-                    new FileContent(encryptedData),
-                    true
-            ));
-        });
-    }
-
-
-    /**
-     *
-     * @param fileName
-     * @param contentType
-     * @param bytes
-     * @return
-     * @throws NoSuchPaddingException
-     * @throws IllegalBlockSizeException
-     * @throws NoSuchAlgorithmException
-     * @throws BadPaddingException
-     * @throws InvalidKeyException
-     *
-     * Implementation without async call from controller. For now, application uses prepareAndSaveAsync method.
-     *
-     */
-    @Override
     public FileMetadata prepareAndSave(String fileName, String contentType, byte[] bytes) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         log.info("+prepareAndSave(): fileName: {}, contentType: {}, size: {}", fileName, contentType, bytes.length);
         byte[] zippedData = compressorService.compress(bytes);
@@ -114,26 +63,29 @@ public class FileServiceImpl implements FileService {
                     fileName,
                     contentType,
                     new FileContent(encryptedData),
-                    false
+                    false,
+                    calculateSize(encryptedData),
+                    calculateSize(encryptedData)
             ));
         }
 
         encryptedData = encryptorService.encrypt(zippedData);
 
         log.info("-prepareAndSave()");
-        return fileRepository.save(new FileMetadata(
+        return fileRepository.save(new FileMetadata( // todo: refactoring
                 fileName,
                 contentType,
                 new FileContent(encryptedData),
-                true
+                true,
+                calculateSize(bytes),
+                calculateSize(encryptedData)
         ));
     }
 
     @Override
-    public FileMetadata decompressAndGetById(Integer id) throws DataFormatException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+    public byte[] decompressAndGetById(Integer id) throws DataFormatException {
         log.info("+decompressAndGetById(): id: {}", id);
-        FileMetadata dbFile = fileRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        FileMetadata dbFile = fileRepository.get(id);
 
         byte[] originalData = dbFile.getFileContent().getContent();
         byte[] decryptedData;
@@ -145,15 +97,15 @@ public class FileServiceImpl implements FileService {
 
         if (dbFile.isZipped()) {
             log.info("decompressAndGetById(): file is zipped. decompressing..");
-            byte[] decompressedData = compressorService.decompress(decryptedData); // todo: refactoring
-            dbFile.setFileContent(new FileContent(decompressedData));
-            return dbFile;
+            return compressorService.decompress(decryptedData); // todo: refactoring
         }
 
-        log.info("+decompressAndGetById(): file is not zipped.");
-        dbFile.setFileContent(new FileContent(decryptedData));
+        log.info("-decompressAndGetById(): file is not zipped.");
+        return decryptedData;
+    }
 
-        return dbFile;
+    private String calculateSize(byte[] data) {
+        return FileUtils.byteCountToDisplaySize(data.length);
     }
 
 }

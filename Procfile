@@ -1,0 +1,1 @@
+web: java -jar target/fileserver-1.0.2.jar
