@@ -38,12 +38,6 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public FileMetadata getById(Integer id) {
-        return fileRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-    }
-
-    @Override
     public void removeById(Integer id) {
         fileRepository.deleteById(id);
     }
