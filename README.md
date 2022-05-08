@@ -5,7 +5,7 @@
 
 ## Description
 
-Pet project, which main goal is to make home file server, which can retrieve files from user, zip, store them, and give link to download it by request. For now it uses default Java zipping utils.
+Pet project, which main goal is to make home file server, which can retrieve files from user, zip, encrypt, store them, and give link to download it by request. For now it uses default Java zipping and encrypting(AES) utils.
 
 ## Diagram
 
