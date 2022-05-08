@@ -12,7 +12,7 @@ services:
     restart: unless-stopped
   server:
     container_name: server
-    build: .
+    image: k0damadev/fileserver
     environment:
       JDBC_DATABASE_URL: jdbc:postgresql://postgres:5432/fileserver
       ENCRYPTION_KEY: vevnwecjc43cece[socmqweokcm34c[3
