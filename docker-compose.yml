@@ -10,3 +10,15 @@ services:
     ports:
       - "5432:5432"
     restart: unless-stopped
+  server:
+    container_name: server
+    build: .
+    environment:
+      JDBC_DATABASE_URL: jdbc:postgresql://postgres:5432/fileserver
+      ENCRYPTION_KEY: vevnwecjc43cece[socmqweokcm34c[3
+      AUTH_USERNAME: serv
+      AUTH_PASSWORD: testpass
+    depends_on:
+      - postgres
+    ports:
+      - "5050:5050"
