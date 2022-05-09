@@ -1,20 +1,15 @@
 package com.tre3p.fileserver.view;
 
 import com.tre3p.fileserver.model.FileMetadata;
-import com.tre3p.fileserver.security.SecurityService;
 import com.tre3p.fileserver.service.FileService;
 import com.tre3p.fileserver.service.impl.FileServiceImpl;
-import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Anchor;
-import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.upload.Upload;
-import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
+import com.vaadin.flow.component.upload.receivers.MultiFileBuffer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.InputStreamFactory;
@@ -47,7 +42,7 @@ public class MainView extends VerticalLayout {
     }
 
     private Upload getUpload() {
-        MultiFileMemoryBuffer mf = new MultiFileMemoryBuffer();
+        MultiFileBuffer mf = new MultiFileBuffer();
 
         Upload upload = new Upload(mf);
 
@@ -63,8 +58,9 @@ public class MainView extends VerticalLayout {
             }
             try {
                 fileService.prepareAndSave(fileName, contentType, data);
+                inputStream.close();
             } catch (NoSuchPaddingException | IllegalBlockSizeException | NoSuchAlgorithmException |
-                     BadPaddingException | InvalidKeyException e) {
+                     BadPaddingException | InvalidKeyException | IOException e) {
                 throw new RuntimeException(e);
             }
             grid.setItems(fileService.getAll());

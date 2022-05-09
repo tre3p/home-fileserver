@@ -2,6 +2,8 @@ services:
   postgres:
     container_name: postgres
     image: postgres
+    volumes:
+      - postgres:/home/pg_data
     environment:
       POSTGRES_USER: tr33p
       POSTGRES_PASSWORD: root
@@ -22,3 +24,5 @@ services:
       - postgres
     ports:
       - "5050:5050"
+volumes:
+  postgres:
