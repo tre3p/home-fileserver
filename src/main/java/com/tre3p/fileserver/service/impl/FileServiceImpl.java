@@ -43,6 +43,11 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
+    public FileMetadata prepareAndSave(String fileName, String contentType, String path) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+        return null;
+    }
+
+   /* @Override
     public FileMetadata prepareAndSave(String fileName, String contentType, byte[] bytes) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         log.info("+prepareAndSave(): fileName: {}, contentType: {}, size: {}", fileName, contentType, bytes.length);
         byte[] zippedData = compressorService.compress(bytes);
@@ -74,14 +79,14 @@ public class FileServiceImpl implements FileService {
                 calculateSize(bytes),
                 calculateSize(encryptedData)
         ));
-    }
+    }*/
 
     @Override
     public byte[] decompressAndGetById(Integer id) throws DataFormatException {
-        log.info("+decompressAndGetById(): id: {}", id);
+        /*log.info("+decompressAndGetById(): id: {}", id);
         FileMetadata dbFile = fileRepository.get(id);
 
-        byte[] originalData = dbFile.getFileContent().getContent();
+        //byte[] originalData = dbFile.getFileContent().getContent();
         byte[] decryptedData;
         try {
             decryptedData = encryptorService.decrypt(originalData);
@@ -95,7 +100,8 @@ public class FileServiceImpl implements FileService {
         }
 
         log.info("-decompressAndGetById(): file is not zipped.");
-        return decryptedData;
+        return decryptedData;*/
+        return new byte[]{};
     }
 
     private String calculateSize(byte[] data) {

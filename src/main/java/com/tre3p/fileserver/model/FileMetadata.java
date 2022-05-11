@@ -16,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
+import java.io.File;
 
 @Entity
 @Getter
@@ -39,18 +40,14 @@ public class FileMetadata {
 
     private String zippedSize;
 
-    @JsonIgnore
-    @ToString.Exclude
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "file_content_id")
-    private FileContent fileContent;
+    private File pathToFile;
 
-    public FileMetadata(String fileName, String contentType, FileContent data, boolean isZipped, String originalSize, String zippedSize) {
+    public FileMetadata(String fileName, String contentType, boolean isZipped, String originalSize, String zippedSize, File pathToFile) {
         this.fileName = fileName;
         this.contentType = contentType;
-        this.fileContent = data;
         this.isZipped = isZipped;
         this.originalSize = originalSize;
         this.zippedSize = zippedSize;
+        this.pathToFile = pathToFile;
     }
 }

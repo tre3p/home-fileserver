@@ -1,6 +1,7 @@
 package com.tre3p.fileserver.view;
 
 import com.tre3p.fileserver.model.FileMetadata;
+import com.tre3p.fileserver.repository.FileRepository;
 import com.tre3p.fileserver.service.FileService;
 import com.tre3p.fileserver.service.impl.FileServiceImpl;
 import com.vaadin.flow.component.button.Button;
@@ -10,14 +11,24 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MultiFileBuffer;
+import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.InputStreamFactory;
 import com.vaadin.flow.server.StreamResource;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.InvalidKeyException;
@@ -32,8 +43,11 @@ public class MainView extends VerticalLayout {
 
     private final FileService fileService;
 
-    public MainView(FileServiceImpl fileService) {
+    private final FileRepository fileRepository;
+
+    public MainView(FileServiceImpl fileService, FileRepository fileRepository) {
         this.fileService = fileService;
+        this.fileRepository = fileRepository;
 
         setSizeFull();
         configureGrid();
@@ -51,18 +65,26 @@ public class MainView extends VerticalLayout {
             String contentType = q.getMIMEType();
             byte[] data;
             InputStream inputStream = mf.getInputStream(fileName);
+            File file = new File("/folder/" + fileName);
             try {
-                data = inputStream.readAllBytes();
+                FileUtils.copyInputStreamToFile(inputStream, file);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            try {
-                fileService.prepareAndSave(fileName, contentType, data);
-                inputStream.close();
+            fileRepository.save(new FileMetadata(
+                    fileName,
+                    contentType,
+                    true,
+                    "",
+                    "",
+                    file
+            ));
+/*            try {
+                //fileService.prepareAndSave(fileName, contentType, data);
             } catch (NoSuchPaddingException | IllegalBlockSizeException | NoSuchAlgorithmException |
-                     BadPaddingException | InvalidKeyException | IOException e) {
+                     BadPaddingException | InvalidKeyException e) {
                 throw new RuntimeException(e);
-            }
+            }*/
             grid.setItems(fileService.getAll());
             upload.clearFileList();
         });
@@ -82,12 +104,13 @@ public class MainView extends VerticalLayout {
             Button button = new Button("Download", VaadinIcon.CLOUD_DOWNLOAD.create());
             Anchor anchor = new Anchor(new StreamResource(file.getFileName(), (InputStreamFactory) () ->
             {
+                InputStream inputStream = null;
                 try {
-                    return new ByteArrayInputStream(fileService.decompressAndGetById(file.getId()));
-                } catch (DataFormatException | NoSuchPaddingException | IllegalBlockSizeException |
-                         NoSuchAlgorithmException | BadPaddingException | InvalidKeyException e) {
+                    inputStream = new FileInputStream(file.getPathToFile());
+                } catch (FileNotFoundException e) {
                     throw new RuntimeException(e);
                 }
+                return inputStream;
             }), "");
             anchor.getElement().setAttribute("download", true);
             anchor.getElement().appendChild(button.getElement());

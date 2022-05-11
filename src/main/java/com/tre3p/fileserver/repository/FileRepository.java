@@ -9,10 +9,5 @@ import javax.transaction.Transactional;
 
 @Repository
 public interface FileRepository extends JpaRepository<FileMetadata, Integer> {
-    @Transactional
-    default FileMetadata get(Integer id) {
-        FileMetadata fm = this.getById(id);
-        Hibernate.initialize(fm.getFileContent());
-        return fm;
-    }
+
 }
