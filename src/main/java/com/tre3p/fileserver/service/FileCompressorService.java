@@ -1,6 +1,5 @@
 package com.tre3p.fileserver.service;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.zip.DataFormatException;

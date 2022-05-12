@@ -4,15 +4,13 @@ import com.tre3p.fileserver.service.FileCompressorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.zip.DataFormatException;
-import java.util.zip.Deflater;
-import java.util.zip.Inflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -22,7 +20,7 @@ public class FileCompressorServiceImpl implements FileCompressorService {
 
     @Override
     public void compress(Path source, String zippedName) throws IOException {
-        ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(zippedName));
+        ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream("/datastorage/" + zippedName));
         FileInputStream fs = new FileInputStream(source.toFile());
 
         ZipEntry zipEntry = new ZipEntry(source.getFileName().toString());
