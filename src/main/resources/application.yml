@@ -22,7 +22,7 @@ spring:
       max-request-size: -1
 
 security:
-  encryption-key: ${ENCRYPTION_KEY}
+  encryption-key: vevnwecjc43cece[socmqweokcm34c[3
   algorithm: AES
-  username: ${AUTH_USERNAME}
-  password: ${AUTH_PASSWORD}
+  username: serv
+  password: testpass

@@ -5,59 +5,39 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Slf4j
 @Service
 public class FileCompressorServiceImpl implements FileCompressorService {
+
     @Override
-    public byte[] compress(byte[] data) {
-        log.info("+compress(): original data size: {}", data.length);
-        Deflater compressor = new Deflater(Deflater.BEST_COMPRESSION, true);
-        compressor.setInput(data);
-        compressor.finish();
+    public void compress(Path source, String zippedName) throws IOException {
+        ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(zippedName));
+        FileInputStream fs = new FileInputStream(source.toFile());
 
-        ByteArrayOutputStream bao = new ByteArrayOutputStream();
-        byte[] readBuffer = new byte[1024];
+        ZipEntry zipEntry = new ZipEntry(source.getFileName().toString());
+        zipOutputStream.putNextEntry(zipEntry);
 
-        while (!compressor.finished()) {
-            int readCount = compressor.deflate(readBuffer);
-            if (readCount > 0) {
-                bao.write(readBuffer, 0, readCount);
-            }
+        byte[] buffer = new byte[1024];
+        int len;
+        while ((len = fs.read(buffer)) > 0) {
+            zipOutputStream.write(buffer, 0, len);
         }
-
-        compressor.end();
-
-        byte[] result = bao.toByteArray();
-
-        log.info("-compress(): compressed data size: {}", result.length);
-        return bao.toByteArray();
+        zipOutputStream.closeEntry();
     }
 
     @Override
     public byte[] decompress(byte[] data) throws DataFormatException {
-        log.info("+decompress(): compressed data size: {}", data.length);
-
-        Inflater decompressor = new Inflater(true);
-        decompressor.setInput(data);
-
-        ByteArrayOutputStream bao = new ByteArrayOutputStream();
-        byte[] readBuffer = new byte[1024];
-
-        while (!decompressor.finished()) {
-            int readCount = decompressor.inflate(readBuffer);
-            if (readCount > 0) {
-                bao.write(readBuffer, 0, readCount);
-            }
-        }
-
-        decompressor.end();
-
-        byte[] result = bao.toByteArray();
-        log.info("-decompress(): decompressed data size: {}", result.length);
-        return result;
+        return new byte[0];
     }
 }

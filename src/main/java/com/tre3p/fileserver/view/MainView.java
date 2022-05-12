@@ -16,6 +16,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.InputStreamFactory;
 import com.vaadin.flow.server.StreamResource;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -35,6 +36,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.zip.DataFormatException;
 
+@Slf4j
 @Route(value = "")
 @PageTitle("File Server")
 public class MainView extends VerticalLayout {
@@ -63,30 +65,13 @@ public class MainView extends VerticalLayout {
         upload.addSucceededListener(q -> {
             String fileName = q.getFileName();
             String contentType = q.getMIMEType();
-            byte[] data;
-            InputStream inputStream = mf.getInputStream(fileName);
-            File file = new File("/folder/" + fileName);
+            File file = mf.getFileData(fileName).getFile();
             try {
-                FileUtils.copyInputStreamToFile(inputStream, file);
+                fileService.prepareAndSave(fileName, contentType, file);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            fileRepository.save(new FileMetadata(
-                    fileName,
-                    contentType,
-                    true,
-                    "",
-                    "",
-                    file
-            ));
-/*            try {
-                //fileService.prepareAndSave(fileName, contentType, data);
-            } catch (NoSuchPaddingException | IllegalBlockSizeException | NoSuchAlgorithmException |
-                     BadPaddingException | InvalidKeyException e) {
-                throw new RuntimeException(e);
-            }*/
             grid.setItems(fileService.getAll());
-            upload.clearFileList();
         });
 
         return upload;
@@ -104,9 +89,10 @@ public class MainView extends VerticalLayout {
             Button button = new Button("Download", VaadinIcon.CLOUD_DOWNLOAD.create());
             Anchor anchor = new Anchor(new StreamResource(file.getFileName(), (InputStreamFactory) () ->
             {
-                InputStream inputStream = null;
+
+                InputStream inputStream;
                 try {
-                    inputStream = new FileInputStream(file.getPathToFile());
+                    inputStream = new FileInputStream(fileRepository.getById(file.getId()).getPathToFile());
                 } catch (FileNotFoundException e) {
                     throw new RuntimeException(e);
                 }
@@ -120,7 +106,11 @@ public class MainView extends VerticalLayout {
         grid.addComponentColumn(file -> {
             Button button = new Button("Delete", VaadinIcon.FILE_REMOVE.create());
             button.addClickListener(event -> {
-                fileService.removeById(file.getId());
+                try {
+                    fileService.removeById(file.getId());
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
                 grid.setItems(fileService.getAll());
             });
             return button;
