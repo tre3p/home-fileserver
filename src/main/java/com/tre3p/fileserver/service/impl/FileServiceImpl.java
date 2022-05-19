@@ -2,8 +2,6 @@ package com.tre3p.fileserver.service.impl;
 
 import com.tre3p.fileserver.model.FileMetadata;
 import com.tre3p.fileserver.repository.FileRepository;
-import com.tre3p.fileserver.service.FileCompressorService;
-import com.tre3p.fileserver.service.FileEncryptorService;
 import com.tre3p.fileserver.service.FileService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +12,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -25,20 +22,10 @@ public class FileServiceImpl implements FileService {
 
     private final FileRepository fileRepository;
 
-    private final FileCompressorService compressorService;
-
-    private final FileEncryptorService encryptorService;
-
     @Override
     public List<FileMetadata> getAll() {
         return fileRepository.findAll();
     }
-
-    @Override
-    public FileMetadata getById(Integer id) {
-        return fileRepository.getById(id);
-    }
-
 
     @Override
     public void removeById(Integer id) throws FileNotFoundException {
@@ -82,6 +69,11 @@ public class FileServiceImpl implements FileService {
             log.error("-prepareAndSave(): file not exists");
             throw new FileNotFoundException("File not exists");
         }
+    }
+
+    @Override
+    public FileMetadata getById(Integer id) {
+        return fileRepository.getById(id);
     }
 
     private String calculateSize(long length) {

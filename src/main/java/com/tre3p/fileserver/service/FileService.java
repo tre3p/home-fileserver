@@ -16,8 +16,7 @@ import java.util.zip.DataFormatException;
 
 public interface FileService {
     List<FileMetadata> getAll();
-    FileMetadata getById(Integer id) throws FileNotFoundException;
     void removeById(Integer id) throws FileNotFoundException;
     FileMetadata prepareAndSave(String fileName, String contentType, File file) throws IOException;
-    //byte[] decompressAndGetById(Integer id) throws DataFormatException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException;
+    FileMetadata getById(Integer id);
 }

@@ -25,7 +25,6 @@ public class FileServerApplication extends SpringBootServletInitializer
 		SpringApplication.run(FileServerApplication.class, args);
 	}
 
-
 	@Override
 	public void run(String... args) throws Exception {
 		try {

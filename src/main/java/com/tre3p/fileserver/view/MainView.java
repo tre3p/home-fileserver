@@ -45,11 +45,8 @@ public class MainView extends VerticalLayout {
 
     private final FileService fileService;
 
-    private final FileRepository fileRepository;
-
-    public MainView(FileServiceImpl fileService, FileRepository fileRepository) {
+    public MainView(FileServiceImpl fileService) {
         this.fileService = fileService;
-        this.fileRepository = fileRepository;
 
         setSizeFull();
         configureGrid();
@@ -92,7 +89,7 @@ public class MainView extends VerticalLayout {
 
                 InputStream inputStream;
                 try {
-                    inputStream = new FileInputStream(fileRepository.getById(file.getId()).getPathToFile());
+                    inputStream = new FileInputStream(fileService.getById(file.getId()).getPathToFile());
                 } catch (FileNotFoundException e) {
                     throw new RuntimeException(e);
                 }
