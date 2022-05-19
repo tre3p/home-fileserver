@@ -49,10 +49,12 @@ public class FileServiceImpl implements FileService {
         if (file.exists()) {
             log.info("prepareAndSave(): file exists, saving..");
 
+
             File newFile = Files.move(Paths.get(
                     file.getAbsolutePath()),
                     Paths.get("/datastorage/" + fileName)
             ).toFile();
+
 
             long beforeCompress = newFile.length();
 
