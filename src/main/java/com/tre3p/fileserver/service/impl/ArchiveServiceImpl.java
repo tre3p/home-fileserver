@@ -15,10 +15,11 @@ import java.util.zip.ZipOutputStream;
 @Service
 public class ArchiveServiceImpl implements ArchiveService {
 
+    // todo: проверить как сжимаются файлы весом больше чем 5 гб
     @Override
-    public void zipFile(String fileName, String filePath, File file) throws IOException {
+    public File zipFile(String fileName, String filePath, File file) throws IOException {
 
-        log.debug("-zipFile() file path {}", file.getAbsolutePath());
+        log.info("-zipFile() file path {}", file.getAbsolutePath());
 
         String sourceFile =  file.getAbsolutePath();
         FileOutputStream fos = new FileOutputStream("/datastorage/" + fileName + ".zip");
@@ -38,5 +39,7 @@ public class ArchiveServiceImpl implements ArchiveService {
         zos.close();
         fis.close();
         fos.close();
+
+        return new File("/datastorage/" + fileName + ".zip");
     }
 }

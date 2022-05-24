@@ -56,18 +56,27 @@ public class FileServiceImpl implements FileService {
                     Paths.get("/datastorage/" + fileName)
             ).toFile();
 
-            archiveService.zipFile(fileName, newFile.getAbsolutePath(), newFile);
+            File zippedFile = archiveService.zipFile(fileName, newFile.getAbsolutePath(), newFile);
+
+            newFile.delete();
+
+            /*
+            Сделать проверку на размер файла после сжатия.
+            Если сжатый файл > чем оригинальный - сохраняем оригинальный файл.
+            Если нет - сжатый.
+             */
 
             long beforeCompress = newFile.length();
 
             log.info("-prepareAndSave(): file successfully saved at {}", newFile.getPath());
             return fileRepository.save(new FileMetadata(
                     fileName,
+                    zippedFile.getName(),
                     contentType,
                     false,
                     calculateSize(beforeCompress),
                     calculateSize(beforeCompress),
-                    newFile.getAbsolutePath()
+                    zippedFile.getAbsolutePath()
                 ));
         } else {
             log.error("-prepareAndSave(): file not exists");
