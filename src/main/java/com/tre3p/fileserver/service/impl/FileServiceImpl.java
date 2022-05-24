@@ -2,6 +2,7 @@ package com.tre3p.fileserver.service.impl;
 
 import com.tre3p.fileserver.model.FileMetadata;
 import com.tre3p.fileserver.repository.FileRepository;
+import com.tre3p.fileserver.service.ArchiveService;
 import com.tre3p.fileserver.service.FileService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import java.util.List;
 public class FileServiceImpl implements FileService {
 
     private final FileRepository fileRepository;
+    private final ArchiveService archiveService;
 
     @Override
     public List<FileMetadata> getAll() {
@@ -53,6 +55,8 @@ public class FileServiceImpl implements FileService {
                     file.getAbsolutePath()),
                     Paths.get("/datastorage/" + fileName)
             ).toFile();
+
+            archiveService.zipFile(fileName, newFile.getAbsolutePath(), newFile);
 
             long beforeCompress = newFile.length();
 
