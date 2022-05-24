@@ -25,7 +25,10 @@ public class FileMetadata {
     private Integer id;
 
     @NotEmpty
-    private String fileName;
+    private String originalFileName;
+
+    @NotEmpty
+    private String zippedFileName;
 
     private String contentType;
 
@@ -38,8 +41,9 @@ public class FileMetadata {
     @NotEmpty
     private String pathToFile;
 
-    public FileMetadata(String fileName, String contentType, boolean isZipped, String originalSize, String zippedSize, String pathToFile) {
-        this.fileName = fileName;
+    public FileMetadata(String originalFileName, String zippedFileName, String contentType, boolean isZipped, String originalSize, String zippedSize, String pathToFile) {
+        this.originalFileName = originalFileName;
+        this.zippedFileName = zippedFileName;
         this.contentType = contentType;
         this.isZipped = isZipped;
         this.originalSize = originalSize;

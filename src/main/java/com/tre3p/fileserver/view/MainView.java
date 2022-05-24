@@ -65,7 +65,7 @@ public class MainView extends VerticalLayout {
 
     private void configureGrid() {
         grid.setSizeFull();
-        grid.addColumn(FileMetadata::getFileName).setHeader("File Name");
+        grid.addColumn(FileMetadata::getOriginalFileName).setHeader("File Name");
         grid.addColumn(FileMetadata::getContentType).setHeader("Content Type");
         grid.addColumn(FileMetadata::getOriginalSize).setHeader("Original Size");
         grid.addColumn(FileMetadata::getZippedSize).setHeader("Compressed Size");
@@ -73,7 +73,7 @@ public class MainView extends VerticalLayout {
 
         grid.addComponentColumn(file -> {
             Button button = new Button("Download", VaadinIcon.CLOUD_DOWNLOAD.create());
-            Anchor anchor = new Anchor(new StreamResource(file.getFileName(), (InputStreamFactory) () ->
+            Anchor anchor = new Anchor(new StreamResource(file.getZippedFileName(), (InputStreamFactory) () ->
             {
 
                 InputStream inputStream;

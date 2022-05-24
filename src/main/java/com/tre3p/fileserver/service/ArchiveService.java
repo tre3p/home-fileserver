@@ -5,5 +5,5 @@ import java.io.IOException;
 
 public interface ArchiveService {
 
-    void zipFile(String fileName, String filePath, File file) throws IOException;
+    File zipFile(String fileName, String filePath, File file) throws IOException;
 }
