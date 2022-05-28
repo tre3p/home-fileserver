@@ -2,44 +2,43 @@ package com.tre3p.fileserver.service.impl;
 
 import com.tre3p.fileserver.service.ArchiveService;
 import lombok.extern.slf4j.Slf4j;
+import net.lingala.zip4j.ZipFile;
+import net.lingala.zip4j.model.ZipParameters;
+import net.lingala.zip4j.model.enums.CompressionMethod;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 @Slf4j
 @Service
 public class ArchiveServiceImpl implements ArchiveService {
 
-    // todo: проверить как сжимаются файлы весом больше чем 5 гб
+    private static final String DATASTORAGE = "/datastorage/";
+    private static String zipFileName;
+
     @Override
-    public File zipFile(String fileName, String filePath, File file) throws IOException {
+    public ZipFile zipFile(String fileName, String sourceFile) throws IOException {
 
-        log.info("-zipFile() file path {}", file.getAbsolutePath());
+        log.info("-zipFile() file path {}", sourceFile);
 
-        String sourceFile =  file.getAbsolutePath();
-        FileOutputStream fos = new FileOutputStream("/datastorage/" + fileName + ".zip");
-        ZipOutputStream zos = new ZipOutputStream(fos);
         File fileToZip = new File(sourceFile);
-        FileInputStream fis = new FileInputStream(fileToZip);
-        ZipEntry zipEntry = new ZipEntry(fileToZip.getName());
-        zos.putNextEntry(zipEntry);
+        FileInputStream inputStream = new FileInputStream(fileToZip);
 
-        byte[] bytes = new byte[1024];
-        int length;
+        ZipParameters zipParameters = new ZipParameters();
+        zipParameters.setDefaultFolderPath(DATASTORAGE);
+        zipParameters.setCompressionMethod(CompressionMethod.DEFLATE);
+        zipParameters.setFileNameInZip(fileName);
 
-        while((length = fis.read(bytes)) >= 0) {
-            zos.write(bytes, 0, length);
-        }
+        zipFileName = fileName + ".zip";
+        ZipFile zipFile = new ZipFile(zipFileName);
+        zipFile.addStream(inputStream, zipParameters);
 
-        zos.close();
-        fis.close();
-        fos.close();
+        zipFile.renameFile(zipFileName, DATASTORAGE + zipFileName);
 
-        return new File("/datastorage/" + fileName + ".zip");
+        inputStream.close();
+
+        return zipFile;
     }
 }

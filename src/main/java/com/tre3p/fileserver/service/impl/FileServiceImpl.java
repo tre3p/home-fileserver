@@ -6,6 +6,7 @@ import com.tre3p.fileserver.service.ArchiveService;
 import com.tre3p.fileserver.service.FileService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.lingala.zip4j.ZipFile;
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
 
@@ -56,7 +57,7 @@ public class FileServiceImpl implements FileService {
                     Paths.get("/datastorage/" + fileName)
             ).toFile();
 
-            File zippedFile = archiveService.zipFile(fileName, newFile.getAbsolutePath(), newFile);
+            ZipFile zippedFile = archiveService.zipFile(fileName, newFile.getAbsolutePath());
 
             newFile.delete();
 
@@ -66,17 +67,17 @@ public class FileServiceImpl implements FileService {
             Если нет - сжатый.
              */
 
-            long beforeCompress = newFile.length();
+            long beforeCompress = zippedFile.getFile().length(); // file.length();
 
             log.info("-prepareAndSave(): file successfully saved at {}", newFile.getPath());
             return fileRepository.save(new FileMetadata(
                     fileName,
-                    zippedFile.getName(),
+                    zippedFile.getFile().getName(), // file.getName()
                     contentType,
                     false,
                     calculateSize(beforeCompress),
                     calculateSize(beforeCompress),
-                    zippedFile.getAbsolutePath()
+                    zippedFile.getFile().getAbsolutePath() // file.getAbsolutePath()
                 ));
         } else {
             log.error("-prepareAndSave(): file not exists");
