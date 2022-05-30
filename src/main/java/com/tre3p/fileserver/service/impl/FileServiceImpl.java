@@ -6,7 +6,6 @@ import com.tre3p.fileserver.service.ArchiveService;
 import com.tre3p.fileserver.service.FileService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.lingala.zip4j.ZipFile;
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
 
@@ -57,28 +56,22 @@ public class FileServiceImpl implements FileService {
                     Paths.get("/datastorage/" + fileName)
             ).toFile();
 
-            ZipFile zippedFile = archiveService.zipFile(fileName, newFile.getAbsolutePath());
+            File zippedFile = archiveService.zipFile(fileName, newFile.getAbsolutePath());
 
-            newFile.delete();
+            File fileForSave = compareFileSizes(newFile, zippedFile);
+            long beforeCompress = fileForSave.length();
 
-            /*
-            Сделать проверку на размер файла после сжатия.
-            Если сжатый файл > чем оригинальный - сохраняем оригинальный файл.
-            Если нет - сжатый.
-             */
+            log.info("-prepareAndSave(): file successfully saved at {}", fileForSave.getPath());
 
-            long beforeCompress = zippedFile.getFile().length(); // file.length();
-
-            log.info("-prepareAndSave(): file successfully saved at {}", newFile.getPath());
-            return fileRepository.save(new FileMetadata(
-                    fileName,
-                    zippedFile.getFile().getName(), // file.getName()
-                    contentType,
-                    false,
-                    calculateSize(beforeCompress),
-                    calculateSize(beforeCompress),
-                    zippedFile.getFile().getAbsolutePath() // file.getAbsolutePath()
-                ));
+             return fileRepository.save(new FileMetadata(
+                     fileName,
+                     fileForSave.getName(),
+                     contentType,
+                     false,
+                     calculateSize(beforeCompress),
+                     calculateSize(beforeCompress),
+                     fileForSave.getAbsolutePath()
+             ));
         } else {
             log.error("-prepareAndSave(): file not exists");
             throw new FileNotFoundException("File not exists");
@@ -90,8 +83,20 @@ public class FileServiceImpl implements FileService {
         return fileRepository.getById(id);
     }
 
+
     private String calculateSize(long length) {
         return FileUtils.byteCountToDisplaySize(length);
+    }
+
+    private File compareFileSizes(File nativeFile, File zippedFile) {
+        if (zippedFile.length() > nativeFile.length()) {
+            log.info("-compareFileSizes(): file saved as native format file");
+            zippedFile.delete();
+            return nativeFile;
+        }
+        log.info("-compareFileSizes(): file saved as zipped format file");
+        nativeFile.delete();
+        return zippedFile;
     }
 
 }
