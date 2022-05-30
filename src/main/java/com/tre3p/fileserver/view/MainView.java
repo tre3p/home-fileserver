@@ -53,7 +53,7 @@ public class MainView extends VerticalLayout {
             String contentType = q.getMIMEType();
             File file = mf.getFileData(fileName).getFile();
             try {
-                fileService.prepareAndSave(fileName, contentType, file);
+                fileService.prepareForSaving(fileName, contentType, file);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
