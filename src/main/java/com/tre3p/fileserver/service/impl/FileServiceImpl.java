@@ -24,6 +24,8 @@ public class FileServiceImpl implements FileService {
     private final FileRepository fileRepository;
     private final ArchiveService archiveService;
 
+    private static final String DATASTORAGE = "/datastorage/";
+
     @Override
     public List<FileMetadata> getAll() {
         return fileRepository.findAll();
@@ -46,32 +48,22 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public FileMetadata prepareAndSave(String fileName, String contentType, File file) throws IOException {
+    public FileMetadata prepareForSaving(String fileName, String contentType, File file) throws IOException {
         log.info("+prepareAndSave(): filename: {}, contentType: {}", fileName, contentType);
         if (file.exists()) {
             log.info("prepareAndSave(): file exists, saving..");
 
-            File newFile = Files.move(Paths.get(
-                    file.getAbsolutePath()),
-                    Paths.get("/datastorage/" + fileName)
-            ).toFile();
+            File newFile = moveFileToMainStorage(file, fileName);
 
             File zippedFile = archiveService.zipFile(fileName, newFile.getAbsolutePath());
 
+            String originalSize = calculateSize(newFile.length());
+
             File fileForSave = compareFileSizes(newFile, zippedFile);
-            long beforeCompress = fileForSave.length();
+            String zippedSize = calculateSize(zippedFile.length());
 
             log.info("-prepareAndSave(): file successfully saved at {}", fileForSave.getPath());
-
-             return fileRepository.save(new FileMetadata(
-                     fileName,
-                     fileForSave.getName(),
-                     contentType,
-                     false,
-                     calculateSize(beforeCompress),
-                     calculateSize(beforeCompress),
-                     fileForSave.getAbsolutePath()
-             ));
+            return save(fileName, contentType, fileForSave, originalSize, zippedSize);
         } else {
             log.error("-prepareAndSave(): file not exists");
             throw new FileNotFoundException("File not exists");
@@ -83,20 +75,43 @@ public class FileServiceImpl implements FileService {
         return fileRepository.getById(id);
     }
 
+    @Override
+    public FileMetadata save(String fileName, String contentType, File file, String originalSize, String zippedSize) {
+        return fileRepository.save(new FileMetadata(
+                fileName,
+                file.getName(),
+                contentType,
+                false,
+                originalSize,
+                zippedSize,
+                file.getAbsolutePath()
+        ));
+    }
+
 
     private String calculateSize(long length) {
-        return FileUtils.byteCountToDisplaySize(length);
+        String result = FileUtils.byteCountToDisplaySize(length);
+        return result.equals("0 bytes") ? "-" : result; // todo: костыль, надо переделать
     }
 
     private File compareFileSizes(File nativeFile, File zippedFile) {
-        if (zippedFile.length() > nativeFile.length()) {
+        long originalSize = nativeFile.length();
+        long zippedSize = zippedFile.length();
+        log.info("compareFileSizes(): originalSize: {}. zippedSize: {}", originalSize, zippedSize);
+        if (zippedSize > originalSize) {
+            zippedFile.delete(); // todo: костыль поправить надо. отсюда убрать удаление файла и возвращать 0/1 в разных случаях
             log.info("-compareFileSizes(): file saved as native format file");
-            zippedFile.delete();
             return nativeFile;
         }
-        log.info("-compareFileSizes(): file saved as zipped format file");
         nativeFile.delete();
+        log.info("-compareFileSizes(): file saved as zipped format file");
         return zippedFile;
     }
 
+    private File moveFileToMainStorage(File file, String originalFileName) throws IOException {
+        return Files.move(Paths.get(
+                file.getAbsolutePath()),
+                Paths.get(DATASTORAGE + originalFileName)
+        ).toFile();
+    }
 }

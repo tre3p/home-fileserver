@@ -17,6 +17,7 @@ import java.util.zip.DataFormatException;
 public interface FileService {
     List<FileMetadata> getAll();
     void removeById(Integer id) throws FileNotFoundException;
-    FileMetadata prepareAndSave(String fileName, String contentType, File file) throws IOException;
+    FileMetadata prepareForSaving(String fileName, String contentType, File file) throws IOException;
     FileMetadata getById(Integer id);
+    FileMetadata save(String fileName, String contentType, File file, String originalSize, String zippedSize);
 }
