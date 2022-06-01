@@ -27,12 +27,12 @@ public class FileServiceImpl implements FileService {
     private static final String DATASTORAGE = "/datastorage/";
 
     @Override
-    public List<FileMetadata> getAll() {
+    public final List<FileMetadata> getAll() {
         return fileRepository.findAll();
     }
 
     @Override
-    public void removeById(Integer id) throws FileNotFoundException {
+    public final void removeById(Integer id) throws FileNotFoundException {
         log.info("+removeById(): id: {}", id);
         FileMetadata savedFile = fileRepository.findById(id)
                         .orElseThrow(() -> new FileNotFoundException("File not exists"));
@@ -48,7 +48,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public FileMetadata prepareForSaving(String fileName, String contentType, File file) throws IOException {
+    public final FileMetadata prepareForSaving(String fileName, String contentType, File file) throws IOException {
         log.info("+prepareAndSave(): filename: {}, contentType: {}", fileName, contentType);
         if (file.exists()) {
             log.info("prepareAndSave(): file exists, saving..");
@@ -71,12 +71,16 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public FileMetadata getById(Integer id) {
+    public final FileMetadata getById(Integer id) {
         return fileRepository.getById(id);
     }
 
     @Override
-    public FileMetadata save(String fileName, String contentType, File file, String originalSize, String zippedSize) {
+    public final FileMetadata save(String fileName,
+                                   String contentType,
+                                   File file,
+                                   String originalSize,
+                                   String zippedSize) {
         return fileRepository.save(new FileMetadata(
                 fileName,
                 file.getName(),
@@ -99,7 +103,7 @@ public class FileServiceImpl implements FileService {
         long zippedSize = zippedFile.length();
         log.info("compareFileSizes(): originalSize: {}. zippedSize: {}", originalSize, zippedSize);
         if (zippedSize > originalSize) {
-            zippedFile.delete(); // todo: костыль поправить надо. отсюда убрать удаление файла и возвращать 0/1 в разных случаях
+            zippedFile.delete(); // todo: костыль поправить надо. отсюда убрать удаление файла и возвращать 0/1
             log.info("-compareFileSizes(): file saved as native format file");
             return nativeFile;
         }

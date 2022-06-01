@@ -1,7 +1,6 @@
 package com.tre3p.fileserver.view;
 
 import com.tre3p.fileserver.model.FileMetadata;
-import com.tre3p.fileserver.service.ArchiveService;
 import com.tre3p.fileserver.service.FileService;
 import com.tre3p.fileserver.service.impl.FileServiceImpl;
 import com.vaadin.flow.component.button.Button;
@@ -28,14 +27,12 @@ import java.io.InputStream;
 @PageTitle("File Server")
 public class MainView extends VerticalLayout {
 
-    Grid<FileMetadata> grid = new Grid<>(FileMetadata.class, false);
+    private Grid<FileMetadata> grid = new Grid<>(FileMetadata.class, false);
 
     private final FileService fileService;
-    private final ArchiveService archiveService;
 
-    public MainView(FileServiceImpl fileService, ArchiveService archiveService) {
+    public MainView(FileServiceImpl fileService) {
         this.fileService = fileService;
-        this.archiveService = archiveService;
 
         setSizeFull();
         configureGrid();
