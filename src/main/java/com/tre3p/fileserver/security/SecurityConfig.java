@@ -29,7 +29,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private String password;
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    protected final void configure(HttpSecurity http) throws Exception {
       http.csrf().disable()
           .requestCache().requestCache(new CustomRequestCache())
           .and().authorizeRequests()
@@ -44,7 +44,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     @Override
-    public UserDetailsService userDetailsService() {
+    public final UserDetailsService userDetailsService() {
       UserDetails user = User.withUsername(username)
               .password("{noop}" + password)
               .roles("USER")
@@ -54,7 +54,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(WebSecurity web) {
+    public final void configure(WebSecurity web) {
       web.ignoring().antMatchers(
           "/VAADIN/**",
           "/favicon.ico",
