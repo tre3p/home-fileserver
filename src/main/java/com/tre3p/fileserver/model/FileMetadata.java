@@ -41,7 +41,13 @@ public class FileMetadata {
     @NotEmpty
     private String pathToFile;
 
-    public FileMetadata(String originalFileName, String zippedFileName, String contentType, boolean isZipped, String originalSize, String zippedSize, String pathToFile) {
+    public FileMetadata(String originalFileName,
+                        String zippedFileName,
+                        String contentType,
+                        boolean isZipped,
+                        String originalSize,
+                        String zippedSize,
+                        String pathToFile) {
         this.originalFileName = originalFileName;
         this.zippedFileName = zippedFileName;
         this.contentType = contentType;

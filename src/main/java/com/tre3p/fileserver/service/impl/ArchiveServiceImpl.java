@@ -18,7 +18,7 @@ public class ArchiveServiceImpl implements ArchiveService {
     private static final String DATASTORAGE = "/datastorage/";
 
     @Override
-    public File zipFile(String fileName, String sourceFile) throws IOException {
+    public final File zipFile(String fileName, String sourceFile) throws IOException {
         log.info("+zipFile(): sourceFile {}, fileName {}", sourceFile, fileName);
 
         File fileToZip = new File(sourceFile);
