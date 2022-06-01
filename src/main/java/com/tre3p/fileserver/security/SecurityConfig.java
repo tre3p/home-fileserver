@@ -42,9 +42,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
           .and().logout().logoutSuccessUrl(LOGOUT_SUCCESS_URL);
     }
 
+
+    /**
+     * Used to authenticate user with his credentials.
+     * @return UserDetailsService with user credentials and default role.
+     */
     @Bean
     @Override
-    public final UserDetailsService userDetailsService() {
+    public UserDetailsService userDetailsService() {
       UserDetails user = User.withUsername(username)
               .password("{noop}" + password)
               .roles("USER")
