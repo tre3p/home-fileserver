@@ -8,7 +8,7 @@ RUN ["mvn", "clean", "package", "-P", "production"]
 
 FROM openjdk:17
 
-COPY --from=builder /app/target/fileserver-1.0.3.jar /application
+COPY --from=builder /app/target/fileserver-1.0.3.jar /application/fileserver-1.0.3.jar
 
 WORKDIR /application
 
