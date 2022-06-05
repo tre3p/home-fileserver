@@ -10,16 +10,14 @@ spring:
     username: tr33p
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
     show-sql: false
-  servlet:
-    multipart:
-      max-file-size: -1
-      max-request-size: -1
+  liquibase:
+    change-log: classpath:/db/changelog/liquibase-changelog.xml
 
 security:
   username: ${AUTH_USERNAME}

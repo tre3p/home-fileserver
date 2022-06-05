@@ -19,23 +19,23 @@ import java.nio.file.Paths;
 @SpringBootApplication(exclude = ErrorMvcAutoConfiguration.class)
 @Theme(themeClass = Lumo.class, variant = Lumo.DARK)
 public class FileServerApplication extends SpringBootServletInitializer
-		implements AppShellConfigurator, CommandLineRunner {
+        implements AppShellConfigurator, CommandLineRunner {
 
-	public static void main(String[] args) {
-		SpringApplication.run(FileServerApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(FileServerApplication.class, args);
+    }
 
-	@Override
-	public void run(String... args) throws Exception {
-		try {
-			Path path = Paths.get("/datastorage").toAbsolutePath().normalize();
-			if (!Files.exists(path)) {
-				log.info("Directory not exists, creating..");
-				Files.createDirectories(path);
-				log.info("Directory created.");
-			}
-		} catch (IOException e) {
-			throw new RuntimeException("Cannot create directory");
-		}
-	}
+    @Override
+    public final void run(String... args) throws Exception {
+        try {
+            Path path = Paths.get("/datastorage").toAbsolutePath().normalize();
+            if (!Files.exists(path)) {
+                log.info("Directory not exists, creating..");
+                Files.createDirectories(path);
+                log.info("Directory created.");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot create directory");
+        }
+    }
 }

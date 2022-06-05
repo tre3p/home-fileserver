@@ -1,7 +1,5 @@
 package com.tre3p.fileserver.service;
 
-import net.lingala.zip4j.ZipFile;
-
 import java.io.File;
 import java.io.IOException;
 

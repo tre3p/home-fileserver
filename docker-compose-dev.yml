@@ -14,11 +14,11 @@ services:
     restart: unless-stopped
   server:
     container_name: server
-    image: "k0damadev/fileserver:latest"
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
     environment:
       JDBC_DATABASE_URL: jdbc:postgresql://postgres:5432/fileserver
-      AUTH_USERNAME: serv
-      AUTH_PASSWORD: testpass
     depends_on:
       - postgres
     ports:
