@@ -28,7 +28,7 @@ public class FileServerApplication extends SpringBootServletInitializer
     @Override
     public final void run(String... args) throws Exception {
         try {
-            Path path = Paths.get("/datastorage").toAbsolutePath().normalize();
+            Path path = Paths.get("/application/datastorage").toAbsolutePath().normalize();
             if (!Files.exists(path)) {
                 log.info("Directory not exists, creating..");
                 Files.createDirectories(path);

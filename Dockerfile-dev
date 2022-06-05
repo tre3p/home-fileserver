@@ -1,5 +1,7 @@
 FROM openjdk:17
 
-COPY target/fileserver-1.0.3.jar .
+COPY target/fileserver-1.0.3.jar /application/fileserver-1.0.3.jar
+
+WORKDIR /application
 
 CMD ["java", "-jar", "-Xmx8g", "fileserver-1.0.3.jar"]
