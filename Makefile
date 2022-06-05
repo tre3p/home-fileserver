@@ -7,3 +7,6 @@ start-dev:
 
 start-db:
 	docker-compose -f docker-compose-db.yml up
+
+lint:
+	./mvnw checkstyle:check
