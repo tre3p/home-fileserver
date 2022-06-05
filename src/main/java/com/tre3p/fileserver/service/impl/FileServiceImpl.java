@@ -59,11 +59,13 @@ public class FileServiceImpl implements FileService {
 
             String originalSize = calculateSize(newFile.length());
 
-            File fileForSave = compareFileSizes(newFile, zippedFile);
+            int fileFormatNum = compareFileSizes(newFile.length(), zippedFile.length());
+            File fileForSave = fileFormatNum == 1 ? zippedFile : newFile;
+            deleteFileFormat(fileFormatNum, newFile, zippedFile);
             String zippedSize = calculateSize(zippedFile.length());
 
             log.info("-prepareAndSave(): file successfully saved at {}", fileForSave.getPath());
-            return save(fileName, contentType, fileForSave, originalSize, zippedSize);
+            return save(fileName, contentType, fileForSave, fileFormatNum, originalSize, zippedSize);
         } else {
             log.error("-prepareAndSave(): file not exists");
             throw new FileNotFoundException("File not exists");
@@ -76,12 +78,13 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public FileMetadata save(String fileName, String contentType, File file, String originalSize, String zippedSize) {
+    public FileMetadata save(String fileName, String contentType, File file,
+                             int formatNum, String originalSize, String zippedSize) {
         return fileRepository.save(new FileMetadata(
                 fileName,
                 file.getName(),
                 contentType,
-                false,
+                isZipped(formatNum),
                 originalSize,
                 zippedSize,
                 file.getAbsolutePath()
@@ -94,19 +97,27 @@ public class FileServiceImpl implements FileService {
         return result.equals("0 bytes") ? "-" : result; // todo: костыль, надо переделать
     }
 
-    private File compareFileSizes(File nativeFile, File zippedFile) {
-        long originalSize = nativeFile.length();
-        long zippedSize = zippedFile.length();
-        log.info("compareFileSizes(): originalSize: {}. zippedSize: {}", originalSize, zippedSize);
-        if (zippedSize > originalSize) {
-            zippedFile.delete(); // todo: костыль поправить надо. отсюда убрать удаление файла и возвращать 0/1 в разных случаях
-            log.info("-compareFileSizes(): file saved as native format file");
-            return nativeFile;
-        }
-        nativeFile.delete();
-        log.info("-compareFileSizes(): file saved as zipped format file");
-        return zippedFile;
+    private int compareFileSizes(long originalSize, long zippedSize) {
+        log.info("+compareFileSizes(): originalSize: {}. zippedSize: {}", originalSize, zippedSize);
+        int result =  zippedSize > originalSize ? 0 : 1;
+        log.info("compareFileSizes(): result {}", result);
+        return result;
     }
+
+    private void deleteFileFormat(int fileFormatNum, File originalFile, File zippedFile) { // todo: сделать красивей
+        if (fileFormatNum == 1) {
+            log.info("deleteFileFormat: deleting original file {} ...", originalFile);
+            originalFile.delete();
+            return;
+        }
+        log.info("deleteFileFormat: deleting zipped file {} ...", zippedFile);
+        zippedFile.delete();
+    }
+
+    private boolean isZipped(int formatNum) {
+        return formatNum == 1 ? true : false; // todo: перенести метод в зип сервис
+    }
+
 
     private File moveFileToMainStorage(File file, String originalFileName) throws IOException {
         return Files.move(Paths.get(
