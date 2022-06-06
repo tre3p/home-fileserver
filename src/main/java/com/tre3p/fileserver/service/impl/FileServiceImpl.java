@@ -54,18 +54,21 @@ public class FileServiceImpl implements FileService {
             log.info("prepareAndSave(): file exists, saving..");
 
             File newFile = moveFileToMainStorage(file, fileName);
-            log.info("newFile path: {}", newFile.getAbsolutePath()); // тут он в /datastorage
+            log.info("newFile path: {}", newFile.getAbsolutePath());
 
             File zippedFile = archiveService.zipFile(fileName, newFile.getAbsolutePath());
-            log.info("file path after zipping: {}", zippedFile.getAbsolutePath()); // а тут в директории с джарником
+            log.info("file path after zipping: {}", zippedFile.getAbsolutePath());
 
             String originalSize = calculateSize(newFile.length());
 
-            File fileForSave = compareFileSizes(newFile, zippedFile);
+            int numOfFormat = compareFileSizes(newFile.length(), zippedFile.length()); //сравниваем форматы,получаем 1/0
+            File fileForSave = numOfFormat == 1 ? zippedFile : newFile; // получаем файл в зависимости от номера
+            removeNotSelectedFormat(numOfFormat, newFile, zippedFile); // удаляем ненужный формат
+
             String zippedSize = calculateSize(zippedFile.length());
 
             log.info("-prepareAndSave(): file successfully saved at {}", fileForSave.getPath());
-            return save(fileName, contentType, fileForSave, originalSize, zippedSize);
+            return save(fileName, contentType, fileForSave, numOfFormat, originalSize, zippedSize);
         } else {
             log.error("-prepareAndSave(): file not exists");
             throw new FileNotFoundException("File not exists");
@@ -81,13 +84,14 @@ public class FileServiceImpl implements FileService {
     public final FileMetadata save(String fileName,
                                    String contentType,
                                    File file,
+                                   int numFormat,
                                    String originalSize,
                                    String zippedSize) {
         return fileRepository.save(new FileMetadata(
                 fileName,
                 file.getName(),
                 contentType,
-                false,
+                archiveService.isZipped(numFormat),
                 originalSize,
                 zippedSize,
                 file.getAbsolutePath()
@@ -100,18 +104,16 @@ public class FileServiceImpl implements FileService {
         return result.equals("0 bytes") ? "-" : result; // todo: костыль, надо переделать
     }
 
-    private File compareFileSizes(File nativeFile, File zippedFile) {
-        long originalSize = nativeFile.length();
-        long zippedSize = zippedFile.length();
-        log.info("compareFileSizes(): originalSize: {}. zippedSize: {}", originalSize, zippedSize);
-        if (zippedSize > originalSize) {
-            zippedFile.delete(); // todo: костыль поправить надо. отсюда убрать удаление файла и возвращать 0/1
-            log.info("-compareFileSizes(): file saved as native format file");
-            return nativeFile;
-        }
-        nativeFile.delete();
-        log.info("-compareFileSizes(): file saved as zipped format file");
-        return zippedFile;
+    private int compareFileSizes(long originalSize, long zippedSize) {
+        log.info("+compareFileSizes(): originalSize: {}. zippedSize: {}", originalSize, zippedSize);
+        int result =  zippedSize > originalSize ? 0 : 1;
+        log.info("compareFileSizes(): result {}", result);
+        return result;
+    }
+
+    private void removeNotSelectedFormat(int numOfFormat, File originalFile, File zippedFile) {
+        boolean isRemoved = numOfFormat == 1 ? originalFile.delete() : zippedFile.delete();
+        log.info("-removeNotSelectedFormat() is file removed: {}", isRemoved);
     }
 
     private File moveFileToMainStorage(File file, String originalFileName) throws IOException {
