@@ -11,6 +11,6 @@ public interface FileService {
     void removeById(Integer id) throws FileNotFoundException;
     FileMetadata prepareForSaving(String fileName, String contentType, File file) throws IOException;
     FileMetadata getById(Integer id);
-    FileMetadata save(String fileName, String contentType, File file,
-                      int formatNum, String originalSize, String zippedSize);
+    FileMetadata save(String fileName, String contentType, File file, int numFormat,
+                      String originalSize, String zippedSize);
 }
