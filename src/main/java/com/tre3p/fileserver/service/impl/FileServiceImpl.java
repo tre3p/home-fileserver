@@ -24,7 +24,7 @@ public class FileServiceImpl implements FileService {
     private final FileRepository fileRepository;
     private final ArchiveService archiveService;
 
-    private static final String DATASTORAGE = "/datastorage/";
+    private static final String DATASTORAGE = "/application/datastorage/";
 
     @Override
     public final List<FileMetadata> getAll() {
@@ -54,8 +54,10 @@ public class FileServiceImpl implements FileService {
             log.info("prepareAndSave(): file exists, saving..");
 
             File newFile = moveFileToMainStorage(file, fileName);
+            log.info("newFile path: {}", newFile.getAbsolutePath()); // тут он в /datastorage
 
             File zippedFile = archiveService.zipFile(fileName, newFile.getAbsolutePath());
+            log.info("file path after zipping: {}", zippedFile.getAbsolutePath()); // а тут в директории с джарником
 
             String originalSize = calculateSize(newFile.length());
 
@@ -113,6 +115,7 @@ public class FileServiceImpl implements FileService {
     }
 
     private File moveFileToMainStorage(File file, String originalFileName) throws IOException {
+        log.info("+moveFileToMainStorage(): moving to: {}", DATASTORAGE + originalFileName);
         return Files.move(Paths.get(
                 file.getAbsolutePath()),
                 Paths.get(DATASTORAGE + originalFileName)

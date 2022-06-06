@@ -15,7 +15,7 @@ import java.io.IOException;
 @Service
 public class ArchiveServiceImpl implements ArchiveService {
 
-    private static final String DATASTORAGE = "/datastorage/";
+    private static final String DATASTORAGE = "/application/datastorage/"; // todo: константа повторяется, надо вынести
 
     @Override
     public final File zipFile(String fileName, String sourceFile) throws IOException {
