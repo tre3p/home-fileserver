@@ -1,5 +1,6 @@
 package com.tre3p.fileserver.service.impl;
 
+import com.tre3p.fileserver.model.FileMetadata;
 import com.tre3p.fileserver.service.ArchiveService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,8 +38,17 @@ public class ArchiveServiceImpl implements ArchiveService {
     }
 
     @Override
-    public final void unzipFile(String sourceZippedFile, String originalFileName) throws ZipException {
-        new ZipFile(sourceZippedFile).extractFile(originalFileName, DATASTORAGE); // todo: найти,где вызывать этот метод
+    public final String unzipFile(FileMetadata fileMetadata) throws ZipException {
+        if (!fileMetadata.isZipped()) {
+            log.info("unzipFile: in if return {}", fileMetadata.getPathToFile());
+            return fileMetadata.getPathToFile();
+        }
+        ZipFile zipFile = new ZipFile(fileMetadata.getPathToFile());
+        zipFile.extractAll(DATASTORAGE);
+
+        String filePath = new File(DATASTORAGE + fileMetadata.getOriginalFileName()).getAbsolutePath();
+        log.info("unzipFile: return {}", filePath);
+        return filePath;
     }
 
 
@@ -46,7 +56,4 @@ public class ArchiveServiceImpl implements ArchiveService {
     public final boolean isZipped(int numFormat) {
         return numFormat == 1;
     }
-
-    //todo: сделать метод для анзипа, и в сущность добавлять признак архивированности isZipped.
-    // todo: если файл зипованый - делаем анзип, если нет - отдаем как есть ПРИ СКАЧИВАНИИ
 }
