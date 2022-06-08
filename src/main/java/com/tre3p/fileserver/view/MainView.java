@@ -1,5 +1,6 @@
 package com.tre3p.fileserver.view;
 
+import com.tre3p.fileserver.exception.IncorrectPasswordException;
 import com.tre3p.fileserver.model.FileMetadata;
 import com.tre3p.fileserver.service.ArchiveService;
 import com.tre3p.fileserver.service.FileService;
@@ -18,11 +19,16 @@ import com.vaadin.flow.server.StreamResource;
 import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.exception.ZipException;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 
 @Slf4j
 @Route(value = "")
@@ -54,8 +60,13 @@ public class MainView extends VerticalLayout {
             String contentType = q.getMIMEType();
             File file = mf.getFileData(fileName).getFile();
             try {
-                fileService.prepareForSaving(fileName, contentType, file);
-            } catch (IOException e) {
+                fileService.prepareAndSave(fileName, contentType, file);
+            } catch (IOException
+                     | IllegalBlockSizeException
+                     | NoSuchPaddingException
+                     | NoSuchAlgorithmException
+                     | BadPaddingException
+                     | InvalidKeyException e) {
                 throw new RuntimeException(e);
             }
             grid.setItems(fileService.getAll());
@@ -68,8 +79,7 @@ public class MainView extends VerticalLayout {
         grid.setSizeFull();
         grid.addColumn(FileMetadata::getOriginalFileName).setHeader("File Name");
         grid.addColumn(FileMetadata::getContentType).setHeader("Content Type");
-        grid.addColumn(FileMetadata::getOriginalSize).setHeader("Original Size");
-        grid.addColumn(FileMetadata::getZippedSize).setHeader("Compressed Size");
+        grid.addColumn(FileMetadata::getOriginalSize).setHeader("Size");
         grid.setItems(fileService.getAll());
 
         grid.addComponentColumn(file -> {
@@ -79,10 +89,15 @@ public class MainView extends VerticalLayout {
 
                 InputStream inputStream;
                 try {
-                    FileMetadata fileMetadata = fileService.getById(file.getId());
-                    String pathToFile = archiveService.unzipFile(fileMetadata);
-                    inputStream = new FileInputStream(pathToFile); // todo: вынести эту логику в сервис!
-                } catch (FileNotFoundException | ZipException e) {
+                    inputStream = new FileInputStream(fileService.prepareForDownload(file.getId()));
+                } catch (FileNotFoundException
+                         | ZipException
+                         | IncorrectPasswordException
+                         | NoSuchPaddingException
+                         | IllegalBlockSizeException
+                         | NoSuchAlgorithmException
+                         | BadPaddingException
+                         | InvalidKeyException e) {
                     throw new RuntimeException(e);
                 }
                 return inputStream;

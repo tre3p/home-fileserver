@@ -29,40 +29,29 @@ public class FileMetadata {
     @Column(name = "original_file_name")
     private String originalFileName;
 
-    @NotNull
-    @Column(name = "zipped_file_name")
-    private String zippedFileName;
-
     @Column(name = "content_type")
     private String contentType;
 
-    @NotNull
-    @Column(name = "is_zipped")
-    private boolean isZipped;
-
     @Column(name = "original_size")
     private String originalSize;
-
-    @Column(name = "zipped_size")
-    private String zippedSize;
 
     @NotNull
     @Column(name = "path")
     private String pathToFile;
 
+    @NotNull
+    @Column(name = "password")
+    private byte[] password;
+
     public FileMetadata(String originalFileName,
-                        String zippedFileName,
                         String contentType,
-                        boolean isZipped,
                         String originalSize,
-                        String zippedSize,
-                        String pathToFile) {
+                        String pathToFile,
+                        byte[] password) {
         this.originalFileName = originalFileName;
-        this.zippedFileName = zippedFileName;
         this.contentType = contentType;
-        this.isZipped = isZipped;
         this.originalSize = originalSize;
-        this.zippedSize = zippedSize;
         this.pathToFile = pathToFile;
+        this.password = password;
     }
 }

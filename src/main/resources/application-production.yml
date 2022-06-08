@@ -16,9 +16,14 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
     show-sql: false
+  servlet:
+    multipart:
+      max-file-size: -1
+      max-request-size: -1
   liquibase:
     change-log: classpath:/db/changelog/liquibase-changelog.xml
 
 security:
   username: ${AUTH_USERNAME}
   password: ${AUTH_PASSWORD}
+  encryption-key: ${ENCRYPTION_KEY}

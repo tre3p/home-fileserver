@@ -4,7 +4,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
 
-    <changeSet id="create-file-metadata-table" author="tre3p">
+    <changeSet id="create-main-table" author="tre3p">
         <createTable tableName="file_metadata">
             <column name="id" type="int" autoIncrement="true">
                 <constraints primaryKey="true"/>
@@ -12,16 +12,12 @@
             <column name="original_file_name" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="zipped_file_name" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
             <column name="content_type" type="varchar(255)"/>
-            <column name="is_zipped" type="boolean">
+            <column name="original_size" type="varchar(255)"/>
+            <column name="path" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="original_size" type="varchar(255)"/>
-            <column name="zipped_size" type="varchar(255)"/>
-            <column name="path" type="varchar(255)">
+            <column name="password" type="binary">
                 <constraints nullable="false"/>
             </column>
         </createTable>
