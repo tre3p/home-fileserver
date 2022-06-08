@@ -1,6 +1,7 @@
 package com.tre3p.fileserver.view;
 
 import com.tre3p.fileserver.model.FileMetadata;
+import com.tre3p.fileserver.service.ArchiveService;
 import com.tre3p.fileserver.service.FileService;
 import com.tre3p.fileserver.service.impl.FileServiceImpl;
 import com.vaadin.flow.component.button.Button;
@@ -15,6 +16,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.InputStreamFactory;
 import com.vaadin.flow.server.StreamResource;
 import lombok.extern.slf4j.Slf4j;
+import net.lingala.zip4j.exception.ZipException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,9 +32,11 @@ public class MainView extends VerticalLayout {
     private Grid<FileMetadata> grid = new Grid<>(FileMetadata.class, false);
 
     private final FileService fileService;
+    private final ArchiveService archiveService;
 
-    public MainView(FileServiceImpl fileService) {
+    public MainView(FileServiceImpl fileService, ArchiveService archiveService) {
         this.fileService = fileService;
+        this.archiveService = archiveService;
 
         setSizeFull();
         configureGrid();
@@ -70,13 +74,15 @@ public class MainView extends VerticalLayout {
 
         grid.addComponentColumn(file -> {
             Button button = new Button("Download", VaadinIcon.CLOUD_DOWNLOAD.create());
-            Anchor anchor = new Anchor(new StreamResource(file.getZippedFileName(), (InputStreamFactory) () ->
+            Anchor anchor = new Anchor(new StreamResource(file.getOriginalFileName(), (InputStreamFactory) () ->
             {
 
                 InputStream inputStream;
                 try {
-                    inputStream = new FileInputStream(fileService.getById(file.getId()).getPathToFile());
-                } catch (FileNotFoundException e) {
+                    FileMetadata fileMetadata = fileService.getById(file.getId());
+                    String pathToFile = archiveService.unzipFile(fileMetadata);
+                    inputStream = new FileInputStream(pathToFile); // todo: вынести эту логику в сервис!
+                } catch (FileNotFoundException | ZipException e) {
                     throw new RuntimeException(e);
                 }
                 return inputStream;
