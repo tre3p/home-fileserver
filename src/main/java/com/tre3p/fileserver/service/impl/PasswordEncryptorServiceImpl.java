@@ -1,6 +1,7 @@
 package com.tre3p.fileserver.service.impl;
 
 import com.tre3p.fileserver.service.PasswordEncryptorService;
+import com.tre3p.fileserver.util.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,8 @@ import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
+
+import static com.tre3p.fileserver.util.Constants.ENCRYPTION_ALGORITHM;
 import static javax.crypto.Cipher.DECRYPT_MODE;
 import static javax.crypto.Cipher.ENCRYPT_MODE;
 
@@ -22,8 +25,6 @@ public class PasswordEncryptorServiceImpl implements PasswordEncryptorService {
 
     @Value("${security.encryption-key}")
     private String encryptionKey;
-
-    private static final String ENCRYPTION_ALGORITHM = "AES";
 
     /**
      * Encrypts random generated password with user encryption key and return it's byte array representation.
@@ -44,7 +45,7 @@ public class PasswordEncryptorServiceImpl implements PasswordEncryptorService {
             IllegalBlockSizeException,
             BadPaddingException {
         log.info("+encrypt()");
-        Cipher cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
+        Cipher cipher = Cipher.getInstance(Constants.ENCRYPTION_ALGORITHM);
         cipher.init(ENCRYPT_MODE, generateKey(encryptionKey, ENCRYPTION_ALGORITHM));
         byte[] result = cipher.doFinal(decryptedPassword.getBytes());
         log.info("-encrypt()");

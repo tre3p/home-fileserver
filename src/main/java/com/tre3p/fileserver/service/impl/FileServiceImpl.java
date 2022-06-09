@@ -25,6 +25,8 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
+import static com.tre3p.fileserver.util.Constants.DATASTORAGE;
+
 @Slf4j
 @Service
 @AllArgsConstructor
@@ -34,8 +36,6 @@ public class FileServiceImpl implements FileService {
     private final ArchiveService archiveService;
     private final PasswordEncryptorService encryptorService;
     private final RandomPasswordGenerator passwordGenerator;
-
-    private static final String DATASTORAGE = "/application/datastorage/";
 
     @Override
     public final List<FileMetadata> getAll() {
@@ -137,5 +137,10 @@ public class FileServiceImpl implements FileService {
                 file.getAbsolutePath()),
                 Paths.get(DATASTORAGE + originalFileName)
         ).toFile();
+    }
+
+    @Override
+    public final void deleteUnzippedFile(File file) {
+        file.delete();
     }
 }

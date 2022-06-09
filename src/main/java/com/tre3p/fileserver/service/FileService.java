@@ -35,4 +35,5 @@ public interface FileService {
             IncorrectPasswordException;
     FileMetadata getById(Integer id);
     FileMetadata save(String fileName, String contentType, File file, String originalSize, byte[] password);
+    void deleteUnzippedFile(File file);
 }
