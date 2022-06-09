@@ -19,6 +19,7 @@ services:
       JDBC_DATABASE_URL: jdbc:postgresql://postgres:5432/fileserver
       AUTH_USERNAME: serv
       AUTH_PASSWORD: testpass
+      ENCRYPTION_KEY: vpMAccjsdonasdcz
     depends_on:
       - postgres
     ports:
