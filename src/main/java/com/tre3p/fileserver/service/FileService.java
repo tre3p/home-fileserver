@@ -1,8 +1,7 @@
 package com.tre3p.fileserver.service;
 
-import com.tre3p.fileserver.exception.IncorrectPasswordException;
 import com.tre3p.fileserver.model.FileMetadata;
-import net.lingala.zip4j.exception.ZipException;
+import net.lingala.zip4j.io.inputstream.ZipInputStream;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -24,16 +23,13 @@ public interface FileService {
             IllegalBlockSizeException,
             BadPaddingException,
             InvalidKeyException;
-    String prepareForDownload(Integer id) throws
+    ZipInputStream prepareForDownload(Integer id) throws
             NoSuchPaddingException,
             IllegalBlockSizeException,
             NoSuchAlgorithmException,
             BadPaddingException,
             InvalidKeyException,
-            FileNotFoundException,
-            ZipException,
-            IncorrectPasswordException;
+            IOException;
     FileMetadata getById(Integer id);
     FileMetadata save(String fileName, String contentType, File file, String originalSize, byte[] password);
-    void deleteUnzippedFile(File file);
 }
