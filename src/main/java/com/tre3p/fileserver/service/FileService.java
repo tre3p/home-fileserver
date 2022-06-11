@@ -31,5 +31,10 @@ public interface FileService {
             InvalidKeyException,
             IOException;
     FileMetadata getById(Integer id);
-    FileMetadata save(String fileName, String contentType, File file, String originalSize, byte[] password);
+    FileMetadata save(String fileName,
+                      String contentType,
+                      File file,
+                      String originalSize,
+                      String hash,
+                      byte[] password);
 }

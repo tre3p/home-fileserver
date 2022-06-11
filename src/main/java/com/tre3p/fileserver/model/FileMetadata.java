@@ -40,6 +40,10 @@ public class FileMetadata {
     private String pathToFile;
 
     @NotNull
+    @Column(name = "hash", unique = true)
+    private String hash;
+
+    @NotNull
     @Column(name = "password")
     private byte[] password;
 
@@ -47,11 +51,13 @@ public class FileMetadata {
                         String contentType,
                         String originalSize,
                         String pathToFile,
+                        String hash,
                         byte[] password) {
         this.originalFileName = originalFileName;
         this.contentType = contentType;
         this.originalSize = originalSize;
         this.pathToFile = pathToFile;
+        this.hash = hash;
         this.password = password;
     }
 }

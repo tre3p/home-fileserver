@@ -17,7 +17,7 @@ import com.vaadin.flow.server.InputStreamFactory;
 import com.vaadin.flow.server.StreamResource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-
+import org.vaadin.olli.ClipboardHelper;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -42,6 +42,7 @@ public class MainView extends VerticalLayout {
 
         setSizeFull();
         configureGrid();
+        addCopyButton();
         addDownloadButton();
         addDeleteButton();
         add(grid);
@@ -101,6 +102,15 @@ public class MainView extends VerticalLayout {
             anchor.getElement().setAttribute("download", true);
             anchor.getElement().appendChild(button.getElement());
             return anchor;
+        });
+    }
+
+    private void addCopyButton() {
+        grid.addComponentColumn(file -> {
+            Button button = new Button("Copy", VaadinIcon.COPY.create());
+            ClipboardHelper clipboard = new ClipboardHelper(file.getHash(), button);
+            // InetAddress.getLoopbackAddress().getHostAddress() тут нужно найти как узнать текущий домен
+            return clipboard;
         });
     }
 
