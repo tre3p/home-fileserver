@@ -1,7 +1,6 @@
 package com.tre3p.fileserver.view;
 
 import com.tre3p.fileserver.model.FileMetadata;
-import com.tre3p.fileserver.service.ArchiveService;
 import com.tre3p.fileserver.service.FileService;
 import com.tre3p.fileserver.service.impl.FileServiceImpl;
 import com.vaadin.flow.component.button.Button;
@@ -9,7 +8,6 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MultiFileBuffer;
@@ -19,10 +17,14 @@ import com.vaadin.flow.server.InputStreamFactory;
 import com.vaadin.flow.server.StreamResource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+
+import static com.vaadin.flow.component.notification.Notification.Position.BOTTOM_END;
+import static com.vaadin.flow.component.notification.NotificationVariant.LUMO_ERROR;
+import static com.vaadin.flow.component.notification.NotificationVariant.LUMO_SUCCESS;
 
 @Slf4j
 @Route(value = "")
@@ -35,7 +37,7 @@ public class MainView extends VerticalLayout {
 
     private final FileService fileService;
 
-    public MainView(FileServiceImpl fileService, ArchiveService archiveService) {
+    public MainView(FileServiceImpl fileService) {
         this.fileService = fileService;
 
         setSizeFull();
@@ -58,15 +60,13 @@ public class MainView extends VerticalLayout {
                 fileService.prepareAndSave(fileName, contentType, file);
             } catch (Exception e) {
                 Notification.show("Error while saving file!",
-                                DEFAULT_NOTIFICATION_TIMEOUT,
-                                Notification.Position.BOTTOM_END)
-                        .addThemeVariants(NotificationVariant.LUMO_ERROR);
+                        DEFAULT_NOTIFICATION_TIMEOUT,
+                        BOTTOM_END).addThemeVariants(LUMO_ERROR);
                 throw new RuntimeException(e);
             }
             Notification.show("File successfully uploaded!",
                     DEFAULT_NOTIFICATION_TIMEOUT,
-                    Notification.Position.BOTTOM_END)
-                    .addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                    BOTTOM_END).addThemeVariants(LUMO_SUCCESS);
             grid.setItems(fileService.getAll());
         });
         return upload;
@@ -86,21 +86,20 @@ public class MainView extends VerticalLayout {
             Anchor anchor = new Anchor(new StreamResource(file.getOriginalFileName(), (InputStreamFactory) () ->
             {
                 InputStream inputStream;
+
                 try {
-                    String unzippedFilePath = fileService.prepareForDownload(file.getId());
-                    inputStream = new FileInputStream(unzippedFilePath);
+                    inputStream = fileService.prepareForDownload(file.getId());
                 } catch (Exception e) {
-                    Notification.show("Error while downloading file!", // todo: инит уведомлений в конструкторе над
+                    Notification.show(
+                            "Error while downloading file!",
                             DEFAULT_NOTIFICATION_TIMEOUT,
-                            Notification.Position.BOTTOM_END)
-                            .addThemeVariants(NotificationVariant.LUMO_ERROR);
+                            BOTTOM_END).addThemeVariants(LUMO_ERROR);
                     throw new RuntimeException(e);
                 }
                 return inputStream;
             }), StringUtils.EMPTY);
             anchor.getElement().setAttribute("download", true);
             anchor.getElement().appendChild(button.getElement());
-            // todo: думал тут вызывать удаление анзип файла, но не срабатывает
             return anchor;
         });
     }
@@ -111,11 +110,15 @@ public class MainView extends VerticalLayout {
             button.addClickListener(event -> {
                 try {
                     fileService.removeById(file.getId());
-                } catch (FileNotFoundException e) {
-                    Notification.show("Error while deleting file!",
+                    Notification.show(
+                            "Successfully deleted!",
                             DEFAULT_NOTIFICATION_TIMEOUT,
-                            Notification.Position.BOTTOM_END)
-                            .addThemeVariants(NotificationVariant.LUMO_ERROR);
+                            BOTTOM_END).addThemeVariants(LUMO_SUCCESS);
+                } catch (FileNotFoundException e) {
+                    Notification.show(
+                            "Error while deleting file!",
+                            DEFAULT_NOTIFICATION_TIMEOUT,
+                            BOTTOM_END).addThemeVariants(LUMO_ERROR);
                     throw new RuntimeException(e);
                 }
                 grid.setItems(fileService.getAll());

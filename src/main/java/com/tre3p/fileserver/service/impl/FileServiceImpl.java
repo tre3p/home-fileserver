@@ -1,6 +1,5 @@
 package com.tre3p.fileserver.service.impl;
 
-import com.tre3p.fileserver.exception.IncorrectPasswordException;
 import com.tre3p.fileserver.model.FileMetadata;
 import com.tre3p.fileserver.repository.FileRepository;
 import com.tre3p.fileserver.service.ArchiveService;
@@ -9,7 +8,7 @@ import com.tre3p.fileserver.service.PasswordEncryptorService;
 import com.tre3p.fileserver.util.RandomPasswordGenerator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.lingala.zip4j.exception.ZipException;
+import net.lingala.zip4j.io.inputstream.ZipInputStream;
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
 
@@ -46,7 +45,7 @@ public class FileServiceImpl implements FileService {
     public final void removeById(Integer id) throws FileNotFoundException {
         log.info("+removeById(): id: {}", id);
         FileMetadata savedFile = fileRepository.findById(id)
-                        .orElseThrow(() -> new FileNotFoundException("File not exists"));
+                .orElseThrow(() -> new FileNotFoundException("File not exists"));
         log.info("removeById(): file found, deleting..");
 
         File file = new File(savedFile.getPathToFile());
@@ -110,14 +109,12 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public final String prepareForDownload(Integer id) throws NoSuchPaddingException,
+    public final ZipInputStream prepareForDownload(Integer id) throws NoSuchPaddingException,
             IllegalBlockSizeException,
             NoSuchAlgorithmException,
             BadPaddingException,
             InvalidKeyException,
-            FileNotFoundException,
-            ZipException,
-            IncorrectPasswordException {
+            IOException {
         log.info("+prepareForDownload(): id: {}", id);
         FileMetadata zippedFile = getById(id);
         byte[] password = encryptorService.decrypt(zippedFile.getPassword());
@@ -134,13 +131,8 @@ public class FileServiceImpl implements FileService {
     private File moveFileToMainStorage(File file, String originalFileName) throws IOException {
         log.info("moveFileToMainStorage(): moving to: {}", DATASTORAGE + originalFileName);
         return Files.move(Paths.get(
-                file.getAbsolutePath()),
+                        file.getAbsolutePath()),
                 Paths.get(DATASTORAGE + originalFileName)
         ).toFile();
-    }
-
-    @Override
-    public final void deleteUnzippedFile(File file) {
-        file.delete();
     }
 }
