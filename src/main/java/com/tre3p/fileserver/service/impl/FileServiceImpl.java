@@ -72,7 +72,7 @@ public class FileServiceImpl implements FileService {
             log.info("prepareAndSave(): newFile path: {}", newFile.getAbsolutePath());
             String fileSize = calculateSize(newFile.length());
 
-            String randomPassword = ""; //randomUtils.generateRandomPassword();
+            String randomPassword = "testpassword"; //randomUtils.generateRandomPassword();
             byte[] encryptedPassword = encryptorService.encrypt(randomPassword);
             String randomHash = randomUtils.generateRandomAlphaNumericHash();
             log.info("HASH: {}", randomHash);
