@@ -14,7 +14,7 @@ jobs:
       with: 
         playbook: deploy.yml
         directory: ./.github/workflows
-        inventory: ${{secrets.STAND_ADDRESS}}
+        inventory: |
+          [all]
+          ${{ secrets.STAND_ADDRESS }} ansible_user=${{ secrets.DEPLOY_USER }}
         key: ${{secrets.SSH_KEY}}
-        options: |
-          --user root
