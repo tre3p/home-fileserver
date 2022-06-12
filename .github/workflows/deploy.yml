@@ -1,4 +1,4 @@
-- hosts: test
+- hosts: all
 
   tasks:
   - name: install git, curl
@@ -28,6 +28,18 @@
       url: https://github.com/docker/compose/releases/download/v2.4.1/docker-compose-linux-x86_64
       dest: /usr/local/bin/docker-compose
       mode: u+x,g+x,o+x
+
+  - name: stop all running containers
+    ansible.builtin.shell:
+      cmd: docker stop $(docker ps -a -q)
+
+  - name: delete all running containers
+    ansible.builtin.shell:
+      cmd: docker rm $(docker ps -a -q)
+
+  - name: delete all images
+    ansible.builtin.shell:
+      cmd: docker rmi $(docker images -q)
 
   - name: open 5050 port
     ansible.builtin.shell:

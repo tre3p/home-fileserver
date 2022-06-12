@@ -5,16 +5,16 @@ on:
     branches:
       - test
 
-jobs:
-  deploy:
-    runs-on: ubuntu-20.04
-
+jobs:     
+  deployAnsible:
+    runs-on: ubuntu-latest
     steps:
-      - name: deploy on test stand
-        uses: dawidd6/action-ansible-playbook@v2
-        with:
-          playbook: playbook.yml
-          key: ${{secrets.SSH_KEY}}
-          inventory: |
-            [test]
-            ${{secrets.STAND_ADDRESS}}
+    - uses: actions/checkout@v2
+    - uses: dawidd6/action-ansible-playbook@v2
+      with: 
+        playbook: deploy.yml
+        directory: ./.github/workflows
+        inventory: |
+          [all]
+          ${{ secrets.STAND_ADDRESS }} ansible_user=${{ secrets.DEPLOY_USER }}
+        key: ${{secrets.SSH_KEY}}
