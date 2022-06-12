@@ -5,20 +5,8 @@ on:
     branches:
       - test
 
-jobs:
-  prepare:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: checkout repo
-        uses: actions/checkout@v2
-      - name: Lint Ansible Playbook
-        uses: ansible/ansible-lint-action@master
-        with:
-          targets: ""
-          
+jobs:     
   deployAnsible:
-    needs: prepare
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
