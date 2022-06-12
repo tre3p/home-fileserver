@@ -12,7 +12,7 @@ import java.io.IOException;
 
 import static com.tre3p.fileserver.util.Constants.ZIP;
 import static com.tre3p.fileserver.util.Constants.DATASTORAGE;
-import static net.lingala.zip4j.model.enums.CompressionMethod.DEFLATE;
+import static net.lingala.zip4j.model.enums.CompressionMethod.STORE;
 import static net.lingala.zip4j.model.enums.EncryptionMethod.AES;
 
 @Slf4j
@@ -44,7 +44,7 @@ public class ArchiveServiceImpl implements ArchiveService {
         zipParameters.setEncryptFiles(true);
         zipParameters.setEncryptionMethod(AES);
         zipParameters.setDefaultFolderPath(DATASTORAGE);
-        zipParameters.setCompressionMethod(DEFLATE);
+        zipParameters.setCompressionMethod(STORE);
         zipParameters.setFileNameInZip(fileName);
         return zipParameters;
     }

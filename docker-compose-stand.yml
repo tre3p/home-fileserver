@@ -1,0 +1,27 @@
+services:
+  postgres:
+    container_name: postgres
+    image: postgres
+    volumes:
+      - postgres:/home/pg_data
+    environment:
+      POSTGRES_USER: tr33p
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: fileserver
+      PGDATA: /data/postgres
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+  server:
+    container_name: server
+    build:
+      context: .
+      dockerfile: Dockerfile-stand
+    environment:
+      JDBC_DATABASE_URL: jdbc:postgresql://postgres:5432/fileserver
+    depends_on:
+      - postgres
+    ports:
+      - "5050:5050"
+volumes:
+  postgres:

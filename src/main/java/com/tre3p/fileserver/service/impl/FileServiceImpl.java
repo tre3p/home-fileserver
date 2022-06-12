@@ -5,7 +5,7 @@ import com.tre3p.fileserver.repository.FileRepository;
 import com.tre3p.fileserver.service.ArchiveService;
 import com.tre3p.fileserver.service.FileService;
 import com.tre3p.fileserver.service.PasswordEncryptorService;
-import com.tre3p.fileserver.util.RandomPasswordGenerator;
+import com.tre3p.fileserver.util.RandomUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.io.inputstream.ZipInputStream;
@@ -34,7 +34,7 @@ public class FileServiceImpl implements FileService {
     private final FileRepository fileRepository;
     private final ArchiveService archiveService;
     private final PasswordEncryptorService encryptorService;
-    private final RandomPasswordGenerator passwordGenerator;
+    private final RandomUtils randomUtils;
 
     @Override
     public final List<FileMetadata> getAll() {
@@ -72,15 +72,17 @@ public class FileServiceImpl implements FileService {
             log.info("prepareAndSave(): newFile path: {}", newFile.getAbsolutePath());
             String fileSize = calculateSize(newFile.length());
 
-            String randomPassword = passwordGenerator.generateRandomPassword();
+            String randomPassword = randomUtils.generateRandomPassword();
             byte[] encryptedPassword = encryptorService.encrypt(randomPassword);
+            String randomHash = randomUtils.generateRandomAlphaNumericHash();
+            log.info("HASH: {}", randomHash);
 
             File zippedFile = archiveService.zipFile(fileName, newFile.getAbsolutePath(), randomPassword);
             log.info("prepareAndSave(): file path after zipping: {}", zippedFile.getAbsolutePath());
             newFile.delete();
 
             log.info("-prepareAndSave(): file successfully saved at {}", zippedFile.getPath());
-            save(fileName, contentType, zippedFile, fileSize, encryptedPassword);
+            save(fileName, contentType, zippedFile, fileSize, randomHash, encryptedPassword);
         } else {
             log.error("-prepareAndSave(): file not exists");
             throw new FileNotFoundException("File not exists");
@@ -97,6 +99,7 @@ public class FileServiceImpl implements FileService {
                                    String contentType,
                                    File file,
                                    String originalSize,
+                                   String hash,
                                    byte[] password) {
         log.info("save()");
         return fileRepository.save(new FileMetadata(
@@ -104,6 +107,7 @@ public class FileServiceImpl implements FileService {
                 contentType,
                 originalSize,
                 file.getAbsolutePath(),
+                hash,
                 password
         ));
     }

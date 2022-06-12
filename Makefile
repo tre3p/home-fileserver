@@ -8,5 +8,8 @@ start-dev:
 start-db:
 	docker-compose -f docker-compose-db.yml up
 
+start-demo:
+	docker-compose -f docker-compose-stand.yml up -d
+
 lint:
 	./mvnw checkstyle:check

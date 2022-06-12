@@ -17,6 +17,9 @@
             <column name="path" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
+            <column name="hash" type="varchar(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
             <column name="password" type="binary">
                 <constraints nullable="false"/>
             </column>
