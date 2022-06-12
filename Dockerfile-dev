@@ -1,7 +1,9 @@
 FROM openjdk:17
 
-COPY target/fileserver-1.0.3.jar /application/fileserver-1.0.3.jar
+COPY . /application
 
 WORKDIR /application
 
-CMD ["java", "-jar", "-Xmx8g", "fileserver-1.0.3.jar"]
+RUN ./mvnw clean package -P production
+
+ENTRYPOINT ["java", "-jar", "-Xmx8g", "/target/fileserver-1.0.3.jar"]
