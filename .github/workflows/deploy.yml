@@ -31,7 +31,7 @@
 
   - name: stop all running containers
     ansible.builtin.shell:
-      cmd: docker stop $(docker ps -a)
+      cmd: docker stop $(docker ps -a -q)
 
   - name: delete all running containers
     ansible.builtin.shell:
