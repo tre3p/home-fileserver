@@ -6,4 +6,4 @@ WORKDIR /application
 
 RUN ./mvnw clean package -P production
 
-ENTRYPOINT ["java", "-jar", "-Xmx8g", "/target/fileserver-1.0.3.jar"]
+ENTRYPOINT ["java", "-jar", "-Xmx8g", "target/fileserver-1.0.3.jar"]

@@ -9,12 +9,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 @Slf4j
 @SpringBootApplication(exclude = ErrorMvcAutoConfiguration.class)
 @Theme(themeClass = Lumo.class, variant = Lumo.DARK)
@@ -27,7 +21,7 @@ public class FileServerApplication extends SpringBootServletInitializer
 
     @Override
     public final void run(String... args) throws Exception {
-        try {
+/*        try {
             Path path = Paths.get("/application/datastorage").toAbsolutePath().normalize();
             if (!Files.exists(path)) {
                 log.info("Directory not exists, creating..");
@@ -36,6 +30,6 @@ public class FileServerApplication extends SpringBootServletInitializer
             }
         } catch (IOException e) {
             throw new RuntimeException("Cannot create directory");
-        }
+        }*/
     }
 }
