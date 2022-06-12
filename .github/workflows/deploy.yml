@@ -29,6 +29,18 @@
       dest: /usr/local/bin/docker-compose
       mode: u+x,g+x,o+x
 
+  - name: stop all running containers
+    ansible.builtin.shell:
+      cmd: docker stop $(docker ps -a)
+
+  - name: delete all running containers
+    ansible.builtin.shell:
+      cmd: docker rm $(docker ps -a -q)
+
+  - name: delete all images
+    ansible.builtin.shell:
+      cmd: docker rmi $(docker images -q)
+
   - name: open 5050 port
     ansible.builtin.shell:
       cmd: iptables -A INPUT -p tcp --dport 5050 -j ACCEPT
