@@ -1,4 +1,4 @@
-- hosts: test
+- hosts: all
 
   tasks:
   - name: install git, curl
