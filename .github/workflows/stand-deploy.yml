@@ -6,15 +6,24 @@ on:
       - test
 
 jobs:
-  deploy:
-    runs-on: ubuntu-20.04
+  prepare:
+    runs-on: ubuntu-latest
 
     steps:
-      - name: deploy on test stand
-        uses: dawidd6/action-ansible-playbook@v2
+      - name: checkout repo
+        uses: actions/checkout@v2
+      - name: Lint Ansible Playbook
+        uses: ansible/ansible-lint-action@master
         with:
-          playbook: deploy.yml
-          key: ${{secrets.SSH_KEY}}
-          inventory: |
-            [test]
-            ${{secrets.STAND_ADDRESS}}
+          targets: ""
+          
+  deployAnsible:
+    needs: prepare
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: ./.github/actions/ansible
+      with: 
+        playbook: deploy.yml
+        inventory: ${{secrets.STAND_ADDRESS}}
+        key: ${{secrets.SSH_KEY}}
