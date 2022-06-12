@@ -70,9 +70,9 @@ public class FileServiceImpl implements FileService {
 
             File newFile = moveFileToMainStorage(file, fileName);
             log.info("prepareAndSave(): newFile path: {}", newFile.getAbsolutePath());
-            //String fileSize = calculateSize(newFile.length());
+            String fileSize = calculateSize(newFile.length());
 
-            String randomPassword = randomUtils.generateRandomPassword();
+            String randomPassword = ""; //randomUtils.generateRandomPassword();
             byte[] encryptedPassword = encryptorService.encrypt(randomPassword);
             String randomHash = randomUtils.generateRandomAlphaNumericHash();
             log.info("HASH: {}", randomHash);
@@ -82,7 +82,7 @@ public class FileServiceImpl implements FileService {
             newFile.delete();
 
             log.info("-prepareAndSave(): file successfully saved at {}", zippedFile.getPath());
-            save(fileName, contentType, zippedFile, "", randomHash, encryptedPassword);
+            save(fileName, contentType, zippedFile, fileSize, randomHash, encryptedPassword);
         } else {
             log.error("-prepareAndSave(): file not exists");
             throw new FileNotFoundException("File not exists");
