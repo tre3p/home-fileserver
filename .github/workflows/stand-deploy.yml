@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - uses: ./.github/actions/ansible
+    - uses: ./.github/workflows
       with: 
         playbook: deploy.yml
         inventory: ${{secrets.STAND_ADDRESS}}
