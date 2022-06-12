@@ -21,7 +21,7 @@ public class RandomUtils {
      */
     public String generateRandomPassword() throws NoSuchAlgorithmException {
         byte[] result = new byte[generateRandomIntFromRange()];
-        SecureRandom.getInstanceStrong().nextBytes(result);
+        SecureRandom.getInstance("SHA1PRNG").nextBytes(result);
         return new String(result);
     }
 
