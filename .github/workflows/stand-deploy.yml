@@ -1,0 +1,21 @@
+name: Deploy on Test Stand
+
+on:
+  push:
+    branches:
+      - test
+
+jobs:
+  deploy:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: deploy on test stand
+        uses: dawidd6/action-ansible-playbook@v2
+        with:
+          playbook: playbook.yml
+          directory: /ansible
+          key: ${{secrets.SSH_KEY}}
+          inventory: |
+            [test]
+            ${{secrets.STAND_ADDRESS}}
