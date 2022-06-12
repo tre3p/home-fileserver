@@ -14,7 +14,5 @@ jobs:
       with: 
         playbook: deploy.yml
         directory: ./.github/workflows
-        inventory: |
-          [test]
-          ${{secrets.STAND_ADDRESS}}
+        inventory: ${{secrets.STAND_ADDRESS}}
         key: ${{secrets.SSH_KEY}}
