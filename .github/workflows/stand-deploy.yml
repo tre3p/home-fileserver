@@ -16,3 +16,5 @@ jobs:
         directory: ./.github/workflows
         inventory: ${{secrets.STAND_ADDRESS}}
         key: ${{secrets.SSH_KEY}}
+        options: |
+          -u root
