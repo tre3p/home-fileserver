@@ -10,8 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - uses: ./.github/workflows
+    - uses: dawidd6/action-ansible-playbook@v2
       with: 
         playbook: deploy.yml
-        inventory: ${{secrets.STAND_ADDRESS}}
+        inventory: |
+          [test]
+          ${{secrets.STAND_ADDRESS}}
         key: ${{secrets.SSH_KEY}}
