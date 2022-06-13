@@ -1,0 +1,77 @@
+- hosts: all
+  roles:
+    - role: geerlingguy.docker
+      vars:
+        docker_install_compose: true
+        docker_compose_version: "v2.4.1"
+        docker_compose_arch: x86_64
+
+  tasks:
+    - name: install git, curl, make
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: yes
+      loop:
+        - git
+        - curl
+        - make
+
+
+    - name: get ids of all runnings containers
+      ansible.builtin.shell:
+        cmd: docker ps -a -q
+      register: containers
+
+    - name: get ids of all docker images
+      ansible.builtin.shell:
+        cmd: docker images -q
+      register: images
+
+    - name: debug
+      ansible.builtin.debug:
+        var: containers
+
+    - name: debug_two
+      ansible.builtin.debug:
+        var: images
+
+    - name: stop all running containers
+      ansible.builtin.shell:
+        cmd: docker stop {{ item }}
+      with_items: "{{ containers.stdout_lines }}"
+      when: containers.stdout != ""
+
+    - name: delete all running containers
+      ansible.builtin.shell:
+        cmd: docker rm {{ item }}
+      with_items: "{{ containers.stdout_lines }}"
+      when: containers.stdout != ""
+
+    - name: delete all images
+      ansible.builtin.shell:
+        cmd: docker rmi {{ item }}
+      with_items: "{{ images.stdout_lines }}"
+      when: images.stdout != ""
+
+    - name: open 5050 port
+      ansible.builtin.shell:
+        cmd: iptables -A INPUT -p tcp --dport 5050 -j ACCEPT
+
+    - name: save iptables
+      ansible.builtin.shell:
+        cmd: iptables-save
+
+    - name: ufw config
+      ansible.builtin.shell: ufw allow 5050/tcp
+
+    - name: clone project
+      ansible.builtin.git:
+        repo: https://github.com/tre3p/home-fileserver.git
+        dest: /usr/app
+        version: test
+
+    - name: start app
+      command: make start-demo
+      args:
+        chdir: /usr/app
