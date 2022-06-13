@@ -141,7 +141,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public String buildPathToFileHash(String randomHash) {
+    public final String buildPathToFileHash(String randomHash) {
         return ServletUriComponentsBuilder.fromCurrentServletMapping().toUriString() + "/file/" + randomHash;
     }
 }
