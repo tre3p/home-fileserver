@@ -13,6 +13,7 @@ public class RandomUtils {
     private static final int MIN_PASSWORD_LENGTH = 40;
     private static final int MAX_PASSWORD_LENGTH = 100;
     private static final int MAX_HASH_LENGTH = 15;
+    private static final String SECURE_RANDOM_INSTANCE_NAME = "SHA1PRNG";
 
     /**
      * This method used for generation random password for each file which is gonna be zipped.
@@ -21,7 +22,7 @@ public class RandomUtils {
      */
     public String generateRandomPassword() throws NoSuchAlgorithmException {
         byte[] result = new byte[generateRandomIntFromRange()];
-        SecureRandom.getInstance("SHA1PRNG").nextBytes(result);
+        SecureRandom.getInstance(SECURE_RANDOM_INSTANCE_NAME).nextBytes(result);
         return new String(result);
     }
 
