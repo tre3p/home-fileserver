@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.io.inputstream.ZipInputStream;
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -75,7 +76,6 @@ public class FileServiceImpl implements FileService {
             String randomPassword = randomUtils.generateRandomPassword();
             byte[] encryptedPassword = encryptorService.encrypt(randomPassword);
             String randomHash = randomUtils.generateRandomAlphaNumericHash();
-            log.info("HASH: {}", randomHash);
 
             File zippedFile = archiveService.zipFile(fileName, newFile.getAbsolutePath(), randomPassword);
             log.info("prepareAndSave(): file path after zipping: {}", zippedFile.getAbsolutePath());
@@ -138,5 +138,10 @@ public class FileServiceImpl implements FileService {
                         file.getAbsolutePath()),
                 Paths.get(DATASTORAGE + originalFileName)
         ).toFile();
+    }
+
+    @Override
+    public final String buildPathToFileHash(String randomHash) {
+        return ServletUriComponentsBuilder.fromCurrentServletMapping().toUriString() + "/file/" + randomHash;
     }
 }

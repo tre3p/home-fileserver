@@ -37,4 +37,5 @@ public interface FileService {
                       String originalSize,
                       String hash,
                       byte[] password);
+    String buildPathToFileHash(String hash);
 }

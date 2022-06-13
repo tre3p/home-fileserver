@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import java.io.FileNotFoundException;
 
 @AllArgsConstructor
@@ -24,27 +25,25 @@ public class FileURLDownloadController {
     private FileService fileService;
     private FileRepository repository;
 
-
     /**
      *
      * @param hash - hash of file which gonna be downloaded
      * @return InputStreamResource of file with specific hash
      * @throws Exception
      */
-    // todo: вынести в отдельный сервис, либо запихнуть в файлсервис, тут эта логика не нужна явно
     @GetMapping("/{hash}")
     public ResponseEntity<InputStreamResource> dwnld(@PathVariable("hash") String hash) throws Exception {
-        FileMetadata m = repository.findByHash(hash)
+        FileMetadata dbMetadata = repository.findByHash(hash)
                 .orElseThrow(FileNotFoundException::new);
 
-        ZipInputStream z = fileService.prepareForDownload(m.getId());
+        ZipInputStream zipInputStream = fileService.prepareForDownload(dbMetadata.getId());
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.valueOf(m.getContentType()));
-        headers.setContentDispositionFormData("attachment", m.getOriginalFileName());
+        headers.setContentType(MediaType.valueOf(dbMetadata.getContentType()));
+        headers.setContentDispositionFormData("attachment", dbMetadata.getOriginalFileName());
 
-        InputStreamResource is = new InputStreamResource(z);
+        InputStreamResource isr = new InputStreamResource(zipInputStream);
 
-        return new ResponseEntity<>(is, headers, HttpStatus.OK);
+        return new ResponseEntity<>(isr, headers, HttpStatus.OK);
     }
 }
