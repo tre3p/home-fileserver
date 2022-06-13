@@ -11,9 +11,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - uses: dawidd6/action-ansible-playbook@v2
-      with: 
-        playbook: deploy.yml
-        directory: ./.github/workflows
+      with:
+        directory: ./.github/workflows/ansible
+        playbook: ansible-deploy.yml
+        requirements: requirements.yml
         inventory: |
           [all]
           ${{ secrets.STAND_ADDRESS }} ansible_user=${{ secrets.DEPLOY_USER }}
