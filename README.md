@@ -6,7 +6,7 @@
 
 ## Description
 
-Pet project, which main goal is to make home file server, which can retrieve files from user, zip, encrypt, store them, and give link to download it by request. For now it uses default Java zipping and encrypting(AES) utils.
+Pet project, which main goal is to make home file server, which can retrieve files from user, zip, encrypt, store them, and give link to download it by request. Downloading available in 2 ways: download by-click from UI, and copying link to file from UI.
 
 ## Diagram
 
@@ -18,15 +18,23 @@ Pet project, which main goal is to make home file server, which can retrieve fil
 
 ## ToDo:
 
-I appreciate any help, so if you want to make this project a bit better - you can check Issues of this project, and i will be waiting for your PR :P
+I appreciate any help, so if you want to make this project a bit better - you can check Issues of this project.
+
+## Development:
+
+So, if you want to participate in development - make sure that you read this part of readme. Here you can see steps to make good PR:
+1. Create branch for your changes.
+2. When it's done - create PR from your branch to `test` branch. After that, pipeline with Ansible script will be started, and in 10-15 minutes you can see result of your work at http://176.124.201.214:5050 . Password for this test-stand also default.
+3. When you sure it works - you can create PR from test branch to main.
 
 ## Launch
+
+### Development
 
 ```sh
 git clone https://github.com/tre3p/home-fileserver.git file-server
 cd file-server
-./mvnw clean package -DskipTest -P production
-docker-compose up
+make start-dev
 ```
 
 Application will be available at 5050 port. Default username and password:
@@ -34,7 +42,13 @@ Application will be available at 5050 port. Default username and password:
 ```sh
 USERNAME: serv
 PASSWORD: testpass
-ENCRYPTION KEY: vevnwecjc43cece[socmqweokcm34c[3
 ```
 
-You can change all of this stuff in docker-compose file.
+### Production
+
+```sh
+git clone https://github.com/tre3p/home-fileserver.git file-server
+make start-prod
+```
+
+This command will pull latest version of application from Dockerhub and launch it in Docker. Username and password are default, but you can change it in docker-compose. Make sure that `ENCRYPTION_KEY` is 128 bit, because in other way, application will not work properly. You can generate one [here](https://www.allkeysgenerator.com/Random/Security-Encryption-Key-Generator.aspx)
