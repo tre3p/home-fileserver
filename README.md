@@ -24,7 +24,7 @@ I appreciate any help, so if you want to make this project a bit better - you ca
 
 So, if you want to participate in development - make sure that you read this part of readme. Here you can see steps to make good PR:
 1. Create branch for your changes.
-2. When it's done - create PR from your branch to `test` branch. After that, pipeline with Ansible script will be started, and in 10-15 minutes you can see result of your work at http://176.124.201.214:5050 . Password for this test-stand also default.
+2. When it's done - create PR from your branch to `test` branch. After that, pipeline with Ansible script will be started, and in 10-15 minutes you can see result of your work at fs-server-test.ru:5050 . Password for this test-stand also default.
 3. When you sure it works - you can create PR from test branch to main.
 
 ## Launch
