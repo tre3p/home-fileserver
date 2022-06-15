@@ -51,4 +51,4 @@ git clone https://github.com/tre3p/home-fileserver.git file-server
 make start-prod
 ```
 
-This command will pull latest version of application from Dockerhub and launch it in Docker. Username and password are default, but you can change it in docker-compose. Make sure that `ENCRYPTION_KEY` is 128 bit, because in other way, application will not work properly. You can generate one ![here](https://www.allkeysgenerator.com/Random/Security-Encryption-Key-Generator.aspx)
+This command will pull latest version of application from Dockerhub and launch it in Docker. Username and password are default, but you can change it in docker-compose. Make sure that `ENCRYPTION_KEY` is 128 bit, because in other way, application will not work properly. You can generate one [here](https://www.allkeysgenerator.com/Random/Security-Encryption-Key-Generator.aspx)
