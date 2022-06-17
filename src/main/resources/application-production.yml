@@ -1,9 +1,6 @@
 server:
   port: ${PORT:5050}
 
-logging:
-  level: ERROR
-
 spring:
   application:
     name: fileserver
