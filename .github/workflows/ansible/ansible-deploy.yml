@@ -28,14 +28,6 @@
         cmd: docker images -q
       register: images
 
-    - name: debug
-      ansible.builtin.debug:
-        var: containers
-
-    - name: debug_two
-      ansible.builtin.debug:
-        var: images
-
     - name: stop all running containers
       ansible.builtin.shell:
         cmd: docker stop {{ item }}
