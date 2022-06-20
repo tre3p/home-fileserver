@@ -1,28 +1,27 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
-
-    <changeSet id="create-main-table" author="tre3p">
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.6.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+    <changeSet author="ivan (generated)" id="1655728371559-1">
         <createTable tableName="file_metadata">
-            <column name="id" type="int" autoIncrement="true">
-                <constraints primaryKey="true"/>
+            <column autoIncrement="true" name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="file_metadataPK"/>
             </column>
-            <column name="original_file_name" type="varchar(255)">
+            <column name="content_type" type="VARCHAR(255)"/>
+            <column name="hash" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="content_type" type="varchar(255)"/>
-            <column name="original_size" type="varchar(255)"/>
-            <column name="path" type="varchar(255)">
+            <column name="original_file_name" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="hash" type="varchar(255)">
-                <constraints nullable="false" unique="true"/>
+            <column name="original_size" type="VARCHAR(255)"/>
+            <column name="password" type="BYTEA">
+                <constraints nullable="false"/>
             </column>
-            <column name="password" type="binary">
+            <column name="path" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
+    </changeSet>
+    <changeSet author="ivan (generated)" id="1655728371559-2">
+        <addUniqueConstraint columnNames="hash" constraintName="UC_FILE_METADATAHASH_COL" tableName="file_metadata"/>
     </changeSet>
 </databaseChangeLog>
