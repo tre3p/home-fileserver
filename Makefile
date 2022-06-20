@@ -13,3 +13,6 @@ start-demo:
 
 lint:
 	./mvnw checkstyle:check
+
+migrations:
+	./mvnw liquibase:diff
