@@ -1,32 +1,42 @@
 package com.tre3p.fileserver.security;
 
+import com.vaadin.flow.spring.security.VaadinWebSecurityConfigurerAdapter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jose.jws.JwsAlgorithms;
+
+import javax.crypto.spec.SecretKeySpec;
+import java.util.Base64;
 
 
 @EnableWebSecurity
 @Configuration
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig extends VaadinWebSecurityConfigurerAdapter {
 
     private static final String LOGIN_PROCESSING_URL = "/login";
     private static final String LOGIN_FAILURE_URL = "/login?error";
     private static final String LOGIN_URL = "/login";
     private static final String LOGOUT_SUCCESS_URL = "/login";
 
-    @Value("${security.username}")
-    private String username;
+    @Value("${jwt.auth.secret}")
+    private String authSecret;
 
-    @Value("${security.password}")
-    private String password;
+
+    /**
+     * Used to encode hashedPassword.
+     *
+     * @return PasswordEncoder encoded hash hashedPassword.
+     */
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     @Override
     protected final void configure(HttpSecurity http) throws Exception {
@@ -40,24 +50,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginProcessingUrl(LOGIN_PROCESSING_URL)
                 .failureUrl(LOGIN_FAILURE_URL)
                 .and().logout().logoutSuccessUrl(LOGOUT_SUCCESS_URL);
+
+        setStatelessAuthentication(http, new SecretKeySpec(Base64.getDecoder().decode(authSecret),
+                JwsAlgorithms.HS256), "com.tre3p.fileserver");
+
     }
 
-
-    /**
-     * Used to authenticate user with his credentials.
-     *
-     * @return UserDetailsService with user credentials and default role.
-     */
-    @Bean
-    @Override
-    public UserDetailsService userDetailsService() {
-        UserDetails user = User.withUsername(username)
-                .password("{noop}" + password)
-                .roles("USER")
-                .build();
-
-        return new InMemoryUserDetailsManager(user);
-    }
 
     @Override
     public final void configure(WebSecurity web) {
