@@ -2,7 +2,6 @@
 *.class
 
 /node_modules
-/frontend
 tsconfig.json
 types.d.ts
 webpack.config.js
