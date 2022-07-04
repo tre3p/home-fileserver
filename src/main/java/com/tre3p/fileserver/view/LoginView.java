@@ -19,8 +19,8 @@ public class LoginView extends LoginOverlay implements BeforeEnterObserver {
 
         LoginI18n i18n = LoginI18n.createDefault();
         i18n.setHeader(new LoginI18n.Header());
-        i18n.getHeader().setTitle("What are you doing here, moron?");
-        i18n.getHeader().setDescription("Login using serv/testpass");
+        i18n.getHeader().setTitle("File Server");
+        i18n.getHeader().setDescription("Login using default or existing credentials");
         i18n.setAdditionalInformation(null);
         setI18n(i18n);
 
