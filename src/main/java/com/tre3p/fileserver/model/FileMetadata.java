@@ -38,7 +38,6 @@ public class FileMetadata {
 
     @NotNull
     @Column(name = "path")
-    @JsonIgnore
     private String pathToFile;
 
     @NotNull
