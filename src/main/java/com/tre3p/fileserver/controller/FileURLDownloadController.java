@@ -32,7 +32,7 @@ public class FileURLDownloadController {
      * @return InputStreamResource of file with specific hash
      * @throws Exception
      */
-    @CrossOrigin("http://localhost:5050")
+    @CrossOrigin("http://localhost:3000")
     @GetMapping("/{hash}")
     public ResponseEntity<InputStreamResource> downloadByHash(@PathVariable("hash") String hash) throws Exception {
         FileMetadata dbMetadata = repository.findByHash(hash)
