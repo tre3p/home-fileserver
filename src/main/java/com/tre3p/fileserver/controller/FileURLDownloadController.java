@@ -4,7 +4,6 @@ import com.tre3p.fileserver.model.FileMetadata;
 import com.tre3p.fileserver.repository.FileRepository;
 import com.tre3p.fileserver.service.FileService;
 import lombok.AllArgsConstructor;
-import net.lingala.zip4j.io.inputstream.ZipInputStream;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

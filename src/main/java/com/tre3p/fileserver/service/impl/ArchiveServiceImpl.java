@@ -4,7 +4,6 @@ import com.tre3p.fileserver.model.FileMetadata;
 import com.tre3p.fileserver.service.ArchiveService;
 import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.ZipFile;
-import net.lingala.zip4j.io.inputstream.ZipInputStream;
 import net.lingala.zip4j.model.ZipParameters;
 import org.springframework.stereotype.Service;
 import java.io.File;
