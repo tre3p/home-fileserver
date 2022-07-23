@@ -16,7 +16,7 @@ import static net.lingala.zip4j.model.enums.CompressionMethod.STORE;
 import static net.lingala.zip4j.model.enums.EncryptionMethod.AES;
 
 @Slf4j
-@Service()
+@Service
 public class ArchiveServiceImpl implements ArchiveService {
 
     @Override
