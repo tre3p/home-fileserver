@@ -4,7 +4,7 @@ COPY . /app
 
 WORKDIR /app
 
-RUN ["mvn", "clean", "package", "-P", "production"]
+RUN ["mvn", "clean", "install"]
 
 FROM openjdk:17
 
