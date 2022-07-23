@@ -7,6 +7,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.InvalidKeyException;
@@ -23,7 +24,7 @@ public interface FileService {
             IllegalBlockSizeException,
             BadPaddingException,
             InvalidKeyException;
-    ZipInputStream prepareForDownload(Integer id) throws
+    FileInputStream prepareForDownload(Integer id) throws
             NoSuchPaddingException,
             IllegalBlockSizeException,
             NoSuchAlgorithmException,

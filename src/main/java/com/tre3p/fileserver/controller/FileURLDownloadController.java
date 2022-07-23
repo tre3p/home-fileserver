@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 @AllArgsConstructor
@@ -36,13 +37,13 @@ public class FileURLDownloadController {
         FileMetadata dbMetadata = repository.findByHash(hash)
                 .orElseThrow(FileNotFoundException::new);
 
-        ZipInputStream zipInputStream = fileService.prepareForDownload(dbMetadata.getId());
+        FileInputStream fileInputStream = fileService.prepareForDownload(dbMetadata.getId());
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.valueOf(dbMetadata.getContentType()));
         headers.setContentDispositionFormData("attachment", dbMetadata.getOriginalFileName());
 
-        InputStreamResource isr = new InputStreamResource(zipInputStream);
+        InputStreamResource isr = new InputStreamResource(fileInputStream);
         return new ResponseEntity<>(isr, headers, HttpStatus.OK);
     }
 }

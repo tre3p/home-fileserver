@@ -19,7 +19,7 @@ public class FileServerApplication implements CommandLineRunner {
     }
 
     @Override
-    public final void run(String... args) throws Exception {
+    public final void run(String... args) {
         try {
             Path path = Paths.get("/application/datastorage").toAbsolutePath().normalize();
             if (!Files.exists(path)) {

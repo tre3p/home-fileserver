@@ -31,12 +31,12 @@ public class ArchiveServiceImpl implements ArchiveService {
     }
 
     @Override
-    public final ZipInputStream unzipFile(FileMetadata fileMetadata, byte[] password) throws IOException {
+    public final File unzipFile(FileMetadata fileMetadata, byte[] password) throws IOException {
         log.info("+unzipFile(): unzipping file with id: {}", fileMetadata.getId());
         ZipFile zipFile = new ZipFile(fileMetadata.getPathToFile());
         zipFile.setPassword(new String(password).toCharArray());
         log.info("-unzipFile()");
-        return zipFile.getInputStream(zipFile.getFileHeader(fileMetadata.getOriginalFileName()));
+        return zipFile.getFile();
     }
 
     private ZipParameters getZipParameters(String fileName) {

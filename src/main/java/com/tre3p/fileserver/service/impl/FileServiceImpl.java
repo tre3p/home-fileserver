@@ -16,9 +16,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.InvalidKeyException;
@@ -113,7 +111,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public final ZipInputStream prepareForDownload(Integer id) throws NoSuchPaddingException,
+    public final FileInputStream prepareForDownload(Integer id) throws NoSuchPaddingException,
             IllegalBlockSizeException,
             NoSuchAlgorithmException,
             BadPaddingException,
@@ -122,8 +120,9 @@ public class FileServiceImpl implements FileService {
         log.info("+prepareForDownload(): id: {}", id);
         FileMetadata zippedFile = getById(id);
         byte[] password = encryptorService.decrypt(zippedFile.getPassword());
+        File resultFile = archiveService.unzipFile(zippedFile, password);
         log.info("-prepareForDownload()");
-        return archiveService.unzipFile(zippedFile, password);
+        return new FileInputStream(resultFile);
     }
 
 

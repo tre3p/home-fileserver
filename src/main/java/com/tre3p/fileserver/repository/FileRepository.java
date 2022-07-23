@@ -9,7 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface FileRepository extends JpaRepository<FileMetadata, Integer> {
-
     @Query("SELECT f FROM FileMetadata f WHERE f.hash = ?1")
     Optional<FileMetadata> findByHash(String hash);
 }

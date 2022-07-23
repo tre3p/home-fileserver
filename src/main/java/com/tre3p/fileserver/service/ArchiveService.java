@@ -20,6 +20,6 @@ public interface ArchiveService {
             IllegalBlockSizeException,
             BadPaddingException,
             InvalidKeyException;
-    ZipInputStream unzipFile(FileMetadata fileMetadata, byte[] password) throws
+    File unzipFile(FileMetadata fileMetadata, byte[] password) throws
             IOException;
 }
