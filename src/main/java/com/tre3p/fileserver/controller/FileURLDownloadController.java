@@ -32,7 +32,7 @@ public class FileURLDownloadController {
      * @throws Exception
      */
     @GetMapping("/{hash}")
-    public ResponseEntity<InputStreamResource> dwnld(@PathVariable("hash") String hash) throws Exception {
+    public ResponseEntity<InputStreamResource> downloadByHash(@PathVariable("hash") String hash) throws Exception {
         FileMetadata dbMetadata = repository.findByHash(hash)
                 .orElseThrow(FileNotFoundException::new);
 
@@ -43,7 +43,6 @@ public class FileURLDownloadController {
         headers.setContentDispositionFormData("attachment", dbMetadata.getOriginalFileName());
 
         InputStreamResource isr = new InputStreamResource(zipInputStream);
-
         return new ResponseEntity<>(isr, headers, HttpStatus.OK);
     }
 }

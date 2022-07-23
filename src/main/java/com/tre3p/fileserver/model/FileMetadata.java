@@ -1,5 +1,6 @@
 package com.tre3p.fileserver.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -37,6 +38,7 @@ public class FileMetadata {
 
     @NotNull
     @Column(name = "path")
+    @JsonIgnore
     private String pathToFile;
 
     @NotNull
@@ -45,6 +47,7 @@ public class FileMetadata {
 
     @NotNull
     @Column(name = "password")
+    @JsonIgnore
     private byte[] password;
 
     public FileMetadata(String originalFileName,
