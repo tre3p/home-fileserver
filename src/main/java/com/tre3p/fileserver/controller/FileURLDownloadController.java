@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +32,7 @@ public class FileURLDownloadController {
      * @return InputStreamResource of file with specific hash
      * @throws Exception
      */
+    @CrossOrigin("http://localhost:5050")
     @GetMapping("/{hash}")
     public ResponseEntity<InputStreamResource> downloadByHash(@PathVariable("hash") String hash) throws Exception {
         FileMetadata dbMetadata = repository.findByHash(hash)
