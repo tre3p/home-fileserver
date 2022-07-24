@@ -1,9 +1,5 @@
 server:
   port: ${PORT:5050}
-  servlet:
-    session:
-      tracking-modes:
-        - cookie
 
 spring:
   application:
@@ -33,7 +29,3 @@ security:
   username: serv
   password: testpass
   encryption-key: vpMAccjsdonasdcz
-
-jwt:
-  auth:
-    secret: J6GOtcwC2NJI1l0VkHu20PacPFGTxpirBxWwynoHjsc=

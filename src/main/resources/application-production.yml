@@ -1,9 +1,5 @@
 server:
   port: ${PORT:5050}
-  servlet:
-    session:
-      tracking-modes:
-        - cookie
 
 spring:
   application:
@@ -31,7 +27,3 @@ security:
   username: ${AUTH_USERNAME}
   password: ${AUTH_PASSWORD}
   encryption-key: ${ENCRYPTION_KEY}
-
-jwt:
-  auth:
-    secret: J6GOtcwC2NJI1l0VkHu20PacPFGTxpirBxWwynoHjsc=

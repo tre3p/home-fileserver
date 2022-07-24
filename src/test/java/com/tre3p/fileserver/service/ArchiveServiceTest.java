@@ -2,7 +2,7 @@ package com.tre3p.fileserver.service;
 
 import com.tre3p.fileserver.model.FileMetadata;
 import com.tre3p.fileserver.service.impl.ArchiveServiceImpl;
-import com.tre3p.fileserver.utils.Utils;
+import com.tre3p.fileserver.utils.TestUtils;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import org.junit.Rule;
@@ -33,7 +33,7 @@ public class ArchiveServiceTest {
         file2 = temporaryFolder.newFile("tempfile2.txt");
         file3 = temporaryFolder.newFile("tempfile3.txt");
         file4 = temporaryFolder.newFile("tempfile4.txt");
-        Utils.writeDemoDataToFile(file4, "test message");
+        TestUtils.writeDemoDataToFile(file4, "test message");
 
         archiveService = new ArchiveServiceImpl();
 
