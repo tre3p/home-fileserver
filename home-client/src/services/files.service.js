@@ -6,6 +6,10 @@ const filesService = {
     get: async () => {
         const { data } = await httpService.get(filesEndpoint);
         return data;
+    },
+    post: async (payload) => {
+        const { data } = await httpService.post(filesEndpoint, payload);
+        return data;
     }
 };
 
