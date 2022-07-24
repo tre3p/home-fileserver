@@ -26,6 +26,8 @@ spring:
       max-request-size: -1
   liquibase:
     change-log: classpath:/db/changelog/liquibase-changelog.xml
+  main:
+    allow-circular-references: true
 
 security:
   username: serv
