@@ -37,7 +37,6 @@ public class FileController {
     }
 
     @PostMapping
-    @CrossOrigin("http://localhost:3000")
     public void uploadFile(@RequestPart("data") MultipartFile file) throws IOException,
             NoSuchPaddingException,
             IllegalBlockSizeException,
@@ -51,13 +50,11 @@ public class FileController {
         fileService.prepareAndSave(file.getOriginalFilename(), file.getContentType(), file1);
     }
 
-    @CrossOrigin("http://localhost:3000")
     @GetMapping("/{id}")
     public String getHashById(@PathVariable(name = "id") Integer id) {
         return fileService.getById(id).getHash();
     }
 
-    @CrossOrigin("http://localhost:3000")
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable(name = "id") Integer id) throws FileNotFoundException {
         fileService.removeById(id);
