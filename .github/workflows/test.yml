@@ -1,0 +1,14 @@
+name: Build
+
+on:
+  - push
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout project
+        uses: actions/checkout@v2
+      - name: Run tests
+        run: docker build -t test-instance -f Dockerfile-test .
