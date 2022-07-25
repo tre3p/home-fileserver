@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
+import configFile from "../config.json";
 import filesService from "../services/files.service";
-// import { useLocation } from "react-router-dom";
 
 const FilesPage = () => {
     const [data, setData] = useState();
     const [file, setFile] = useState();
 
-    // const location = useLocation();
+    useEffect(() => {
+        filesService.get().then((data) => setData(data));
+    }, []);
 
     const handleFileUpload = async () => {
         let formData = new FormData();
@@ -15,25 +17,24 @@ const FilesPage = () => {
         await filesService.get().then((data) => setData(data));
     };
 
+    const handleFileDelete = async (fileId) => {
+        await filesService.deleteFile(fileId);
+        setData(data.filter((file) => file.id !== fileId));
+    };
+
     const handleFileChange = ({ target }) => {
         console.log(target.files[0]);
         setFile(target.files[0]);
     };
 
-    const handleFileDownload = async (fileId) => {
-        await filesService.getHash(fileId).then((fileHash) => {
-            console.log(fileHash);
-        });
+    const createDownloadLink = (hash) => {
+        const link = document.createElement("a");
+        link.href = `${configFile.apiEndpoint}file/${hash}`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     };
-    useEffect(() => {
-        filesService.get().then((data) => setData(data));
-    }, []);
-    useEffect(() => {
-        console.log(file);
-    }, [file]);
-    useEffect(() => {
-        console.log(data);
-    }, [data]);
+
     return (
         <>
             <h1>Test</h1>
@@ -51,11 +52,14 @@ const FilesPage = () => {
                     {data.map((file) => (
                         <div key={file.id}>
                             <h2>{file.originalFileName}</h2>
-                            <form
-                                action={`http://localhost:5050/file/${file.hash}`}
+                            <button
+                                onClick={() => createDownloadLink(file.hash)}
                             >
-                                <button type="submit">Download</button>
-                            </form>
+                                Download
+                            </button>
+                            <button onClick={() => handleFileDelete(file.id)}>
+                                Delete
+                            </button>
                         </div>
                     ))}
                 </div>
