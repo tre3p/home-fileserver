@@ -7,9 +7,14 @@ const FilesPage = () => {
 
     async function uploadFile() {
         let formData = new FormData();
-        formData.append("file", file);
+        formData.append("data", file);
         await filesService.post(formData).then((data) => console.log(data));
     }
+
+    const handleFileChange = ({ target }) => {
+        console.log(target.files[0]);
+        setFile(target.files[0]);
+    };
     useEffect(() => {
         filesService.get().then((data) => setData(data));
     }, []);
@@ -26,10 +31,7 @@ const FilesPage = () => {
                 type="file"
                 id="fileupload"
                 name="fileupload"
-                onChange={(file) => {
-                    console.log(file);
-                    setFile(file.target.files[0]);
-                }}
+                onChange={handleFileChange}
             />
             <button id="upload-buton" onClick={uploadFile}>
                 Upload
