@@ -12,4 +12,4 @@ COPY --from=builder /app/target/fileserver-1.0.3.jar /application/fileserver-1.0
 
 WORKDIR /application
 
-CMD ["java", "-jar", "-Xmx8g", "-Dspring.profiles.active=production", "fileserver-1.0.3.jar"]
+CMD ["java", "-jar", "-Dspring.profiles.active=production", "fileserver-1.0.3.jar"]

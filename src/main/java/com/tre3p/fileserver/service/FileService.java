@@ -15,7 +15,7 @@ import java.util.List;
 public interface FileService {
     List<FileMetadata> getAll();
     void removeById(Integer id) throws FileNotFoundException;
-    void prepareAndSave(String fileName, String contentType, File file) throws
+    File prepareAndSave(String fileName, String contentType, File file) throws
             IOException,
             NoSuchAlgorithmException,
             NoSuchPaddingException,
@@ -36,5 +36,4 @@ public interface FileService {
                       String originalSize,
                       String hash,
                       byte[] password);
-    String buildPathToFileHash(String hash);
 }

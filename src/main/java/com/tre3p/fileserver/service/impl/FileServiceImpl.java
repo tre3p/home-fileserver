@@ -10,8 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
@@ -54,18 +52,25 @@ public class FileServiceImpl implements FileService {
             log.info("removeById(): file deleted from storage, deleting from database...");
             fileRepository.deleteById(id);
             log.info("removeById(): file deleted from database");
+        } else {
+            log.info("removeById(): file has not been deleted, because it's not found");
+            return;
         }
         log.info("-removeById(): file with ID {} successfully deleted", id);
     }
 
     @Override
-    public final void prepareAndSave(String fileName, String contentType, File file) throws IOException,
+    public final File prepareAndSave(String fileName, String contentType, File file) throws
+            IOException,
             NoSuchAlgorithmException,
             NoSuchPaddingException,
             IllegalBlockSizeException,
             BadPaddingException,
-            InvalidKeyException {
+            InvalidKeyException
+    {
         log.info("+prepareAndSave(): filename: {}, contentType: {}", fileName, contentType);
+
+        File zippedFile;
         if (file.exists()) {
             log.info("prepareAndSave(): file exists, saving..");
 
@@ -77,7 +82,7 @@ public class FileServiceImpl implements FileService {
             byte[] encryptedPassword = encryptorService.encrypt(randomPassword);
             String randomHash = randomUtils.generateRandomAlphaNumericHash();
 
-            File zippedFile = archiveService.zipFile(fileName, newFile.getAbsolutePath(), randomPassword);
+            zippedFile = archiveService.zipFile(fileName, newFile.getAbsolutePath(), randomPassword);
             log.info("prepareAndSave(): file path after zipping: {}", zippedFile.getAbsolutePath());
             newFile.delete();
 
@@ -87,6 +92,7 @@ public class FileServiceImpl implements FileService {
             log.error("-prepareAndSave(): file not exists");
             throw new FileNotFoundException("File not exists");
         }
+        return zippedFile;
     }
 
     @Override
@@ -113,12 +119,14 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public final FileInputStream prepareForDownload(Integer id) throws NoSuchPaddingException,
+    public final FileInputStream prepareForDownload(Integer id) throws
+            NoSuchPaddingException,
             IllegalBlockSizeException,
             NoSuchAlgorithmException,
             BadPaddingException,
             InvalidKeyException,
-            IOException {
+            IOException
+    {
         log.info("+prepareForDownload(): id: {}", id);
         FileMetadata zippedFile = getById(id);
         byte[] password = encryptorService.decrypt(zippedFile.getPassword());
@@ -139,10 +147,5 @@ public class FileServiceImpl implements FileService {
                         file.getAbsolutePath()),
                 Paths.get(DATASTORAGE + originalFileName)
         ).toFile();
-    }
-
-    @Override
-    public final String buildPathToFileHash(String randomHash) {
-        return ServletUriComponentsBuilder.fromCurrentServletMapping().toUriString() + "/file/" + randomHash;
     }
 }
