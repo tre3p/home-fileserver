@@ -8,13 +8,13 @@ import com.tre3p.fileserver.service.PasswordEncryptorService;
 import com.tre3p.fileserver.util.RandomUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.lingala.zip4j.io.inputstream.ZipInputStream;
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -119,7 +119,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public final FileInputStream prepareForDownload(Integer id) throws
+    public final ZipInputStream prepareForDownload(Integer id) throws
             NoSuchPaddingException,
             IllegalBlockSizeException,
             NoSuchAlgorithmException,
@@ -130,9 +130,8 @@ public class FileServiceImpl implements FileService {
         log.info("+prepareForDownload(): id: {}", id);
         FileMetadata zippedFile = getById(id);
         byte[] password = encryptorService.decrypt(zippedFile.getPassword());
-        File resultFile = archiveService.unzipFile(zippedFile, password);
         log.info("-prepareForDownload()");
-        return new FileInputStream(resultFile);
+        return archiveService.unzipFile(zippedFile, password);
     }
 
 

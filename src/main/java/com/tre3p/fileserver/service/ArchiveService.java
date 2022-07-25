@@ -1,6 +1,7 @@
 package com.tre3p.fileserver.service;
 
 import com.tre3p.fileserver.model.FileMetadata;
+import net.lingala.zip4j.io.inputstream.ZipInputStream;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -19,6 +20,6 @@ public interface ArchiveService {
             IllegalBlockSizeException,
             BadPaddingException,
             InvalidKeyException;
-    File unzipFile(FileMetadata fileMetadata, byte[] password) throws
+    ZipInputStream unzipFile(FileMetadata fileMetadata, byte[] password) throws
             IOException;
 }

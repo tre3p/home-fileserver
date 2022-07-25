@@ -4,6 +4,7 @@ import com.tre3p.fileserver.model.FileMetadata;
 import com.tre3p.fileserver.repository.FileRepository;
 import com.tre3p.fileserver.service.FileService;
 import lombok.AllArgsConstructor;
+import net.lingala.zip4j.io.inputstream.ZipInputStream;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -13,8 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 @AllArgsConstructor
@@ -36,13 +35,14 @@ public class FileURLDownloadController {
         FileMetadata dbMetadata = repository.findByHash(hash)
                 .orElseThrow(FileNotFoundException::new);
 
-        FileInputStream fileInputStream = fileService.prepareForDownload(dbMetadata.getId());
+        ZipInputStream zipInputStream = fileService.prepareForDownload(dbMetadata.getId());
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.valueOf(dbMetadata.getContentType()));
         headers.setContentDispositionFormData("attachment", dbMetadata.getOriginalFileName());
 
-        InputStreamResource isr = new InputStreamResource(fileInputStream);
+        InputStreamResource isr = new InputStreamResource(zipInputStream);
+
         return new ResponseEntity<>(isr, headers, HttpStatus.OK);
     }
 }

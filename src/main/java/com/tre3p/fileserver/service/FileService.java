@@ -1,11 +1,12 @@
 package com.tre3p.fileserver.service;
 
 import com.tre3p.fileserver.model.FileMetadata;
+import net.lingala.zip4j.io.inputstream.ZipInputStream;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.InvalidKeyException;
@@ -22,7 +23,7 @@ public interface FileService {
             IllegalBlockSizeException,
             BadPaddingException,
             InvalidKeyException;
-    FileInputStream prepareForDownload(Integer id) throws
+    ZipInputStream prepareForDownload(Integer id) throws
             NoSuchPaddingException,
             IllegalBlockSizeException,
             NoSuchAlgorithmException,
