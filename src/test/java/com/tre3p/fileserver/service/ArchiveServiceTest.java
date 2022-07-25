@@ -6,7 +6,10 @@ import com.tre3p.fileserver.utils.TestUtils;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.io.inputstream.ZipInputStream;
+import org.apache.commons.io.IOUtils;
+import org.junit.Assert;
 import org.junit.Rule;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
@@ -71,25 +74,4 @@ public class ArchiveServiceTest {
             zipFile.extractAll("/tmp");
         }, "Wrong Password");
     }
-
-/*    @Test
-    void testFileFromArchiveCanBeExtractedWithCorrectPassword() throws IOException {
-        archiveService.zipFile(file4.getName(), file4.getAbsolutePath(), "passwd");
-        File decryptedFile = archiveService.unzipFile(
-                new FileMetadata(
-                        file4.getName(),
-                        "application/txt",
-                        "101kb",
-                        file4.getAbsolutePath(),
-                        "rndhash",
-                        "passwd".getBytes()
-                ),
-                "passwd".getBytes()
-        );
-
-        String originalFileContent = Files.readString(Path.of(file4.getAbsolutePath()));
-        String decryptedFileContent = Files.readString(Path.of(decryptedFile.getAbsolutePath()));
-
-        assertEquals(originalFileContent, decryptedFileContent);
-    }*/
 }
